@@ -13,7 +13,7 @@ import (
 )
 
 
-func captureToBuffer() bytes.Buffer {
+func captureToBuffer(req Capmsg)  {
 
     var (
         deviceName  string = "eth0"
@@ -25,6 +25,8 @@ func captureToBuffer() bytes.Buffer {
         handle      *pcap.Handle
         packetCount int = 0
     )
+
+    fmt.Println("Capturing on interface: " + req.Interface)
 
     var f bytes.Buffer
     w := pcapgo.NewWriter(&f)
@@ -53,5 +55,6 @@ func captureToBuffer() bytes.Buffer {
     }
 
     fmt.Println("Returning from capture")
-    return f
+    postBufferCloudshark(*csschemePtr, *cshostPtr, *cstokenPtr, f)
+    return
 }
