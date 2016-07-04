@@ -5,6 +5,7 @@ import (
     "os"
     "time"
     "bytes"
+    "strconv"
 
     "github.com/google/gopacket"
     "github.com/google/gopacket/layers"
@@ -16,17 +17,19 @@ import (
 func captureToBuffer(req Capmsg)  {
 
     var (
-        deviceName  string = "eth0"
-        snapshotLen int32  = 1500
-        promiscuous bool   = false
-        err         error
-        // timeout     time.Duration = -1 * time.Second
-        timeout     time.Duration = 10 * time.Second
-        handle      *pcap.Handle
-        packetCount int = 0
+        deviceName      string = "eth0"
+        snapshotLen     int32  = 1500
+        promiscuous     bool   = false
+        err             error
+        timeout         time.Duration = 10 * time.Second
+        handle          *pcap.Handle
+        packetCount     int = 0
+        packetTotal     int = 100
     )
 
     fmt.Println("Capturing on interface: " + req.Interface)
+    fmt.Println("Number of packets: " + strconv.Itoa(req.Packets))
+    fmt.Println("SnapLength: " + strconv.Itoa(req.Snap))
 
     var f bytes.Buffer
     w := pcapgo.NewWriter(&f)
@@ -44,12 +47,12 @@ func captureToBuffer(req Capmsg)  {
     packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
     for packet := range packetSource.Packets() {
         // Process packet here
-        fmt.Println(packet)
+        // fmt.Println(packet)
         w.WritePacket(packet.Metadata().CaptureInfo, packet.Data())
         packetCount++
         
-        // Only capture 100 and then stop
-        if packetCount >= 100 {
+        // Only capture a fixed amount of packets
+        if packetCount >= packetTotal {
             break
         }
     }

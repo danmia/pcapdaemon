@@ -6,6 +6,7 @@ import (
 
 type Capmsg struct  {
     Node            string          `json:"node,omitempty"`
+    Nodere          string          `json:"nodere,omitempty"`
     Interface       string          `json:"interface,omitempty"`
     Tags            string          `json:"tags,omitempty"`
     Bpf             string          `json:"bpf,omitempty"`
