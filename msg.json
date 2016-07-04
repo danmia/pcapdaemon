@@ -1,5 +1,5 @@
 {
-    "node": "builder1.lab5",
+    "node": "node regex",
     "interface": "bond1",
     "tags": "blah,tagme,stuff",
     "bpf": "dst ip 10.0.0.1",

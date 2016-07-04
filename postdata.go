@@ -88,7 +88,7 @@ func postFileCloudshark(scheme string, host string, token string, fname string) 
     extraParams := map[string]string{
         "additional_tags":        "golang,auto",
     }
-    request, err := newfileUploadRequest("https://pcaplab.defense.net/api/v1/94cecba039c9203c63ba31c14d9bdc04/upload", extraParams, "file", fname)
+    request, err := newfileUploadRequest(scheme + "://" + host + "/api/v1/" + token + "/upload", extraParams, "file", fname)
     if err != nil {
         log.Fatal(err)
     }
