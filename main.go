@@ -12,9 +12,9 @@ var upPtr *bool
 
 func main() {
 
-    cshostPtr = flag.String("cshost", "localhost", "cloushark host")
-    cstokenPtr = flag.String("cstoken", "xxxxxxx", "cloushark api token")
-    csschemePtr = flag.String("csscheme", "https", "cloushark scheme http|https")
+    cshostPtr = flag.String("cshost", "localhost", "cloudshark host")
+    cstokenPtr = flag.String("cstoken", "xxxxxxx", "cloudshark api token")
+    csschemePtr = flag.String("csscheme", "https", "cloudshark scheme http|https")
     redisnode := flag.String("redisnode", "127.0.0.1", "Hostname|IP of redis server.  Default localhost")
     redisport := flag.Int("redisport", 6379, "Port of redis server. Default 6379")
     redischannel := flag.String("redischannel", "capture", "Redis channel to subscribe to.  Default capture")
