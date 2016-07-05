@@ -1,14 +1,19 @@
 package main
 
 import (
-  "flag"
-  "fmt"
+    "flag"
+    "fmt"
+    "os"
+    "log" 
 )
 
 var cshostPtr *string
 var cstokenPtr *string
 var csschemePtr *string
 var upPtr *bool
+var wLocal *bool
+var destdir *string
+var hostname string
 
 func main() {
 
@@ -20,8 +25,22 @@ func main() {
     redischannel := flag.String("redischannel", "capture", "Redis channel to subscribe to.  Default capture")
 
     upPtr = flag.Bool("upload", false, "Upload pcap")
+
+    // flags for writing locally
+    wLocal = flag.Bool("writelocal", false, "Write files locally.  Must set destdir")
+    destdir = flag.String("destdir", "", "Destination directory locally for pcap files.  Requires -writelocal")
+
+    // parse the flags
     flag.Parse()
 
+    if(*wLocal)  {
+        if _, err := os.Stat(*destdir); os.IsNotExist(err) {
+            log.Fatal(*destdir + " does not exist");
+
+        }  
+    }
+
+    hostname, _ = os.Hostname()
     // Channel for thread sync
     done := make(chan bool)
 
@@ -31,6 +50,6 @@ func main() {
         done <- true
     }()
 
-    fmt.Println("Exiting?")
     <- done
+    fmt.Println("Exiting")
 }

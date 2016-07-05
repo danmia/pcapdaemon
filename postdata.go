@@ -49,7 +49,7 @@ func newfileUploadRequest(uri string, params map[string]string, paramName string
     return myReq, myErr
 }
 
-func newBufferUploadRequest(uri string, params map[string]string, paramName string, buf bytes.Buffer) (*http.Request, error)  {
+func newBufferUploadRequest(uri string, params map[string]string, paramName string, buf bytes.Buffer, filename string) (*http.Request, error)  {
     var err error
     body := &bytes.Buffer{}
     writer := multipart.NewWriter(body)
@@ -58,7 +58,7 @@ func newBufferUploadRequest(uri string, params map[string]string, paramName stri
     }
     mh := make(textproto.MIMEHeader)
     mh.Set("Content-Type", "application/octet-stream")
-    mh.Set("Content-Disposition", "form-data; name=\"file\"; filename=\"auto.pcap\"")
+    mh.Set("Content-Disposition", "form-data; name=\"file\"; filename=\"" + filename + "\"")
     part, err := writer.CreatePart(mh)
     if nil != err {
         panic(err.Error())
@@ -113,12 +113,12 @@ func postFileCloudshark(scheme string, host string, token string, fname string) 
     }
 }
 
-func postBufferCloudshark(scheme string, host string, token string, buf bytes.Buffer)  {
+func postBufferCloudshark(scheme string, host string, token string, buf bytes.Buffer, filename string)  {
 
     extraParams := map[string]string{
         "additional_tags":        "golang,auto,buffer",
     }
-    request, err := newBufferUploadRequest(scheme + "://" + host + "/api/v1/" + token + "/upload", extraParams, "file", buf)
+    request, err := newBufferUploadRequest(scheme + "://" + host + "/api/v1/" + token + "/upload", extraParams, "file", buf, filename)
     if err != nil {
         log.Fatal(err)
     }

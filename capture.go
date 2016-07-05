@@ -6,7 +6,7 @@ import (
     "time"
     "bytes"
     "strconv"
-
+    "io/ioutil"
     "github.com/google/gopacket"
     "github.com/google/gopacket/layers"
     "github.com/google/gopacket/pcap"
@@ -25,16 +25,18 @@ func captureToBuffer(req Capmsg)  {
         handle          *pcap.Handle
         packetCount     int = 0
         packetTotal     int = 100
+        fileName        string
     )
 
     fmt.Println("Capturing on interface: " + req.Interface)
     fmt.Println("Number of packets: " + strconv.Itoa(req.Packets))
     fmt.Println("SnapLength: " + strconv.Itoa(req.Snap))
+    fileName = hostname + "-" + req.Interface + "-" + strconv.FormatInt(time.Now().Unix(), 10) + ".pcap"
 
     var f bytes.Buffer
     w := pcapgo.NewWriter(&f)
     w.WriteFileHeader(uint32(snapshotLen), layers.LinkTypeEthernet)
-
+    
     // Open the device for capturing
     handle, err = pcap.OpenLive(deviceName, snapshotLen, promiscuous, timeout)
     if err != nil {
@@ -58,6 +60,17 @@ func captureToBuffer(req Capmsg)  {
     }
 
     fmt.Println("Returning from capture")
-    postBufferCloudshark(*csschemePtr, *cshostPtr, *cstokenPtr, f)
+
+    if(*wLocal)  {
+        ferr := ioutil.WriteFile(*destdir + "/" + fileName, f.Bytes(), 0644)
+        if(ferr != nil)  {
+            fmt.Printf("Error writing file: %s", ferr)
+        }
+    }
+
+    if(*upPtr)  {
+        postBufferCloudshark(*csschemePtr, *cshostPtr, *cstokenPtr, f, fileName)
+    }
+
     return
 }
