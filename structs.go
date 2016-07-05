@@ -14,7 +14,7 @@ type Capmsg struct  {
     Snap            int             `json:"snap"`
     Packets         int             `json:"packets"`
     Alertid         int             `json:"alertid,omitempty"`
-    Duration        time.Duration   `json:"duration,omitempty"`
+    Timeout         time.Duration   `json:"timeout,omitempty"`
 }
 
 type Capmsgs []Capmsg

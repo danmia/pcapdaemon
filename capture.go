@@ -35,6 +35,10 @@ func captureToBuffer(req Capmsg)  {
         return;
     }
 
+    if(req.Timeout != 0)  {
+        timeout = req.Timeout * time.Second
+    }
+
     log.Println("Capturing " + strconv.Itoa(req.Packets) + " packets on interface " + req.Interface + " with a snaplength of " + strconv.Itoa(req.Snap))
     fmt.Println("Capturing " + strconv.Itoa(req.Packets) + " packets on interface " + req.Interface + " with a snaplength of " + strconv.Itoa(req.Snap))
 
