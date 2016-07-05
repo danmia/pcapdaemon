@@ -18,7 +18,7 @@ func captureToBuffer(req Capmsg)  {
 
     var (
         snapshotLen     int32  = 1500
-        promiscuous     bool   = false
+        promiscuous     bool   = true
         err             error
         timeout         time.Duration = 10 * time.Second
         handle          *pcap.Handle

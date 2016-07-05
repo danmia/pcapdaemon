@@ -1,7 +1,9 @@
 package main
 
 import (
+    "os"
     "fmt"
+    "log"
     "strconv"
     "encoding/json"
     "github.com/garyburd/redigo/redis"
@@ -16,6 +18,8 @@ func subToRedis(server string, port int, subchannel string) {
     c, gerr = redis.Dial("tcp", server + ":" + strconv.Itoa(port))
     if gerr != nil {
         fmt.Printf("Error connecting: %s\n", gerr)
+        log.Printf("Error connecting to redis: %s\n", gerr)
+        os.Exit(1) 
     }
     fmt.Println("Connected to " + server) 
     psc := redis.PubSubConn{c}
