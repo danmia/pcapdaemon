@@ -11,6 +11,8 @@ This is a daemon that will subscribe to a redis pub/sub channel for requests to 
     -redisnode string       Hostname|IP of redis server.  Default localhost (default "127.0.0.1")
     -redisport int          Port of redis server. Default 6379 (default 6379)
     -upload                 Upload pcap
+    -writelocal             Write pcap files locally.  Requires setting destdir
+    -destdir                Directory to store locally written pcap files in
     
 ## Message format
     {
