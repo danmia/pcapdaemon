@@ -54,6 +54,18 @@ func captureToBuffer(req Capmsg)  {
         fmt.Printf("Error opening device %s: %v", req.Interface, err)
         log.Printf("Error opening device %s: %v", req.Interface, err)
     }
+    if(req.Bpf != "")  {
+        err := handle.SetBPFFilter(req.Bpf); 
+        if(err != nil)  {
+            fmt.Printf("Error compiling BPF Filter:[%s]  %s\n", req.Bpf, err)
+            log.Printf("Error compiling BPF Filter:[%s]  %s\n", req.Bpf, err)
+            return
+        } else {
+            fmt.Printf("Successfully compiled BPF Filter: [%s]\n", req.Bpf)
+            log.Printf("Successfully compiled BPF Filter: [%s]\n", req.Bpf)
+        } 
+    }
+
     defer handle.Close()
 
     // Start processing packets
