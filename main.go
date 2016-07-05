@@ -2,9 +2,11 @@ package main
 
 import (
     "flag"
-    "fmt"
     "os"
+    "fmt"
     "log" 
+    "log/syslog" 
+    "github.com/google/gopacket/pcap"
 )
 
 var cshostPtr *string
@@ -14,6 +16,22 @@ var upPtr *bool
 var wLocal *bool
 var destdir *string
 var hostname string
+var ifmap = map[string]pcap.Interface{}
+
+func updateInterfaceMap()  {
+    
+    x, ierr := pcap.FindAllDevs() 
+    if(ierr != nil)  {
+        fmt.Printf("Error loading interfaces: %s", ierr)
+        log.Printf("Error loading interfaces: %s", ierr)
+    }
+    
+    for _, v := range x  {
+        fmt.Println("Found interface " + v.Name + " description: " + v.Description)
+        log.Println("Found interface " + v.Name + " description: " + v.Description)
+        ifmap[v.Name] = v
+    }
+}
 
 func main() {
 
@@ -33,6 +51,14 @@ func main() {
     // parse the flags
     flag.Parse()
 
+    logwriter, e := syslog.New(syslog.LOG_NOTICE, "pcapdaemon")
+    if e == nil {
+        log.SetOutput(logwriter)
+    }
+
+    // create interface map
+    updateInterfaceMap()
+
     if(*wLocal)  {
         if _, err := os.Stat(*destdir); os.IsNotExist(err) {
             log.Fatal(*destdir + " does not exist");
@@ -45,11 +71,11 @@ func main() {
     done := make(chan bool)
 
     go func()  {
-        fmt.Println("Starting Redis Thread")
+        log.Println("Starting Redis Thread")
         subToRedis(*redisnode, *redisport, *redischannel)
         done <- true
     }()
 
     <- done
-    fmt.Println("Exiting")
+    log.Println("Exiting")
 }

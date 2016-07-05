@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    "os"
+    "log"
     "time"
     "bytes"
     "strconv"
@@ -17,20 +17,27 @@ import (
 func captureToBuffer(req Capmsg)  {
 
     var (
-        deviceName      string = "eth0"
         snapshotLen     int32  = 1500
         promiscuous     bool   = false
         err             error
         timeout         time.Duration = 10 * time.Second
         handle          *pcap.Handle
         packetCount     int = 0
-        packetTotal     int = 100
         fileName        string
     )
 
-    fmt.Println("Capturing on interface: " + req.Interface)
-    fmt.Println("Number of packets: " + strconv.Itoa(req.Packets))
-    fmt.Println("SnapLength: " + strconv.Itoa(req.Snap))
+    if _, ok := ifmap[req.Interface]; ok  {
+        log.Println("Interface " + req.Interface + " exists in interface map")
+        fmt.Println("Interface " + req.Interface + " exists in interface map")
+    } else {
+        log.Println("Interface " + req.Interface + " does not exist in interface map")
+        fmt.Println("Interface " + req.Interface + " does not exist in interface map")
+        return;
+    }
+
+    log.Println("Capturing " + strconv.Itoa(req.Packets) + " packets on interface " + req.Interface + " with a snaplength of " + strconv.Itoa(req.Snap))
+    fmt.Println("Capturing " + strconv.Itoa(req.Packets) + " packets on interface " + req.Interface + " with a snaplength of " + strconv.Itoa(req.Snap))
+
     fileName = hostname + "-" + req.Interface + "-" + strconv.FormatInt(time.Now().Unix(), 10) + ".pcap"
 
     var f bytes.Buffer
@@ -38,10 +45,10 @@ func captureToBuffer(req Capmsg)  {
     w.WriteFileHeader(uint32(snapshotLen), layers.LinkTypeEthernet)
     
     // Open the device for capturing
-    handle, err = pcap.OpenLive(deviceName, snapshotLen, promiscuous, timeout)
+    handle, err = pcap.OpenLive(req.Interface, int32(req.Snap), promiscuous, timeout)
     if err != nil {
-        fmt.Printf("Error opening device %s: %v", deviceName, err)
-        os.Exit(1)
+        fmt.Printf("Error opening device %s: %v", req.Interface, err)
+        log.Printf("Error opening device %s: %v", req.Interface, err)
     }
     defer handle.Close()
 
@@ -54,7 +61,7 @@ func captureToBuffer(req Capmsg)  {
         packetCount++
         
         // Only capture a fixed amount of packets
-        if packetCount >= packetTotal {
+        if packetCount >= req.Packets {
             break
         }
     }
@@ -65,6 +72,7 @@ func captureToBuffer(req Capmsg)  {
         ferr := ioutil.WriteFile(*destdir + "/" + fileName, f.Bytes(), 0644)
         if(ferr != nil)  {
             fmt.Printf("Error writing file: %s", ferr)
+            log.Printf("Error writing file: %s", ferr)
         }
     }
 
