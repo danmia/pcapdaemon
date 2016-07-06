@@ -27,3 +27,14 @@ This is a daemon that will subscribe to a redis pub/sub channel for requests to 
         "alertid": 655443,
         "timeout": 15
     }
+    
+ * node - node name to capture on (exact match) Use either node or nodere but not both and one is required.
+ * nodere - node regex to capture on.  Use either node or nodere but not both and one is required.
+ * interface - interface to capture on.
+ * tags - additional metadata for the capture file.  Comma separated list.
+ * bpf - A filter string to capture on
+ * customer - Additional metadata field ( not required )
+ * snap - Snaplength or amount to capture into the packet.  Integer.
+ * packets - Number of packets to capture.  Integer.
+ * alertid - An integer ID for the event or alert or whatever you're tracking (not required)
+ * timeout - Number of seconds to let capture last should the number of packets not get hit.  Integer
