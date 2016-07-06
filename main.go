@@ -16,6 +16,7 @@ var upPtr *bool
 var wLocal *bool
 var destdir *string
 var hostname string
+var maxpackets *int
 var ifmap = map[string]pcap.Interface{}
 
 func updateInterfaceMap()  {
@@ -41,6 +42,7 @@ func main() {
     redisnode := flag.String("redisnode", "127.0.0.1", "Hostname|IP of redis server.  Default localhost")
     redisport := flag.Int("redisport", 6379, "Port of redis server. Default 6379")
     redischannel := flag.String("redischannel", "capture", "Redis channel to subscribe to.  Default capture")
+    maxpackets = flag.Int("maxpackets", 50000, "Maximum number of packets per capture.  Default 50000")
 
     upPtr = flag.Bool("upload", false, "Upload pcap")
 

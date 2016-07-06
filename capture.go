@@ -38,6 +38,17 @@ func captureToBuffer(req Capmsg)  {
         return;
     }
 
+    // Do sanity checking on max number of packets
+    if(req.Packets == 0)  {
+        fmt.Println("Invalid Capture size.  packets must be set to between 1 and " + strconv.Itoa(*maxpackets))
+        log.Println("Invalid Capture size.  packets must be set to between 1 and " + strconv.Itoa(*maxpackets))
+        return
+    }
+    if(req.Packets > *maxpackets)  {
+        fmt.Println("Invalid Capture size.  packets cannot be > than maxpackets which is " + strconv.Itoa(*maxpackets))
+        log.Println("Invalid Capture size.  packets cannot be > than maxpackets which is " + strconv.Itoa(*maxpackets))
+        return
+    }
 
     // Check the node against the message to see if we match either node or nodere 
     if(req.Node != "" && req.Nodere != "")  {
