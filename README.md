@@ -13,6 +13,7 @@ This is a daemon that will subscribe to a redis pub/sub channel for requests to 
     -upload                 Upload pcap
     -writelocal             Write pcap files locally.  Requires setting destdir
     -destdir                Directory to store locally written pcap files in
+    -maxpackets             Maximum number of packets per capture.  Default 50000.
     
 ## Message format
     {
