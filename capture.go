@@ -5,6 +5,7 @@ import (
     "log"
     "time"
     "bytes"
+    "regexp"
     "strconv"
     "io/ioutil"
     "github.com/google/gopacket"
@@ -20,10 +21,12 @@ func captureToBuffer(req Capmsg)  {
         snapshotLen     int32  = 1500
         promiscuous     bool   = true
         err             error
+        rerr            error
         timeout         time.Duration = 10 * time.Second
         handle          *pcap.Handle
         packetCount     int = 0
         fileName        string
+        matchNode       bool = false
     )
 
     if _, ok := ifmap[req.Interface]; ok  {
@@ -34,6 +37,50 @@ func captureToBuffer(req Capmsg)  {
         fmt.Println("Interface " + req.Interface + " does not exist in interface map")
         return;
     }
+
+
+    // Check the node against the message to see if we match either node or nodere 
+    if(req.Node != "" && req.Nodere != "")  {
+        fmt.Println("Invalid msg:  both node and nodere are set.  Use one or the other")
+        log.Println("Invalid msg:  both node and nodere are set.  Use one or the other")
+        return
+    }
+
+    if(req.Node == "" && req.Nodere == "")  {
+        fmt.Println("Invalid msg:  both node and nodere are missing.  Use one or the other")
+        log.Println("Invalid msg:  both node and nodere are missing.  Use one or the other")
+        return
+    }
+
+    if(req.Node != "")  {
+        if(req.Node == hostname)  {
+            fmt.Println("Matched node: " + req.Node)
+            log.Println("Matched node: " + req.Node)
+            matchNode = true
+        } else if(req.Node == "any")  {
+            fmt.Println("Matched node: any")
+            log.Println("Matched node: any")
+            matchNode = true
+        } 
+    } else if(req.Nodere != "")  {
+        matchNode, rerr = regexp.MatchString(req.Nodere, hostname)
+        if(rerr != nil)  {
+            fmt.Printf("Error applying regex:  %s\n", rerr)
+            log.Printf("Error applying regex:  %s\n", rerr)
+        } 
+
+        if(matchNode)  {
+            fmt.Println("Node regex match:  " + req.Nodere + " against " + hostname)
+            log.Println("Node regex match:  " + req.Nodere + " against " + hostname)
+        }
+    }
+        
+    if(matchNode == false)  {
+        fmt.Println("We didn't match via node or nodere " + hostname)
+        log.Println("We didn't match via node or nodere " + hostname)
+        return
+    }
+    // END OF NODE MATCHING
 
     if(req.Timeout != 0)  {
         timeout = req.Timeout * time.Second
