@@ -33,11 +33,9 @@ func subToRedis(server string, port int, subchannel string) {
             if err := json.Unmarshal(v.Data, &msg); err != nil {
                 fmt.Println(err)
             } else {
-                if(*upPtr)  {
-                    go func() {
-                        captureToBuffer(msg);
-                    }()
-                }
+                go func() {
+                    captureToBuffer(msg);
+                }()
             }
         case redis.Subscription:
             fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)

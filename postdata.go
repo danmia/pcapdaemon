@@ -83,10 +83,10 @@ func newBufferUploadRequest(uri string, params map[string]string, paramName stri
     return myReq, myErr
 }
 
-func postFileCloudshark(scheme string, host string, token string, fname string)  {
+func postFileCloudshark(scheme string, host string, token string, fname string, tags string)  {
 
     extraParams := map[string]string{
-        "additional_tags":        "golang,auto",
+        "additional_tags":        tags,
     }
     request, err := newfileUploadRequest(scheme + "://" + host + "/api/v1/" + token + "/upload", extraParams, "file", fname)
     if err != nil {
@@ -113,10 +113,10 @@ func postFileCloudshark(scheme string, host string, token string, fname string) 
     }
 }
 
-func postBufferCloudshark(scheme string, host string, token string, buf bytes.Buffer, filename string)  {
+func postBufferCloudshark(scheme string, host string, token string, buf bytes.Buffer, filename string, tags string)  {
 
     extraParams := map[string]string{
-        "additional_tags":        "golang,auto,buffer",
+        "additional_tags":        tags,
     }
     request, err := newBufferUploadRequest(scheme + "://" + host + "/api/v1/" + token + "/upload", extraParams, "file", buf, filename)
     if err != nil {

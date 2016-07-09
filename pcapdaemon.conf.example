@@ -1,0 +1,25 @@
+[general]
+maxpackets  = 50000
+writelocal  = false
+localdir    = "/tmp"
+snaplength  = 500
+
+[cloudshark]
+host        = "cloudshark.org"
+scheme      = "https"
+port        = 443
+token       = "fffffffffffffffffff"
+upload      = true
+
+[redis]
+host        = "node.running.redis.net
+port        = 6379
+channel     = "capture"
+
+[[interface]]
+name        = "eth0"
+alias       = ["main", "public"]
+
+[[interface]]
+name        = "lo"
+alias       = ["local"]

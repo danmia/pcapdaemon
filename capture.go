@@ -26,6 +26,7 @@ func captureToBuffer(req Capmsg)  {
         handle          *pcap.Handle
         packetCount     int = 0
         fileName        string
+        tagstr          string
         matchNode       bool = false
     )
 
@@ -44,9 +45,9 @@ func captureToBuffer(req Capmsg)  {
         log.Println("Invalid Capture size.  packets must be set to between 1 and " + strconv.Itoa(*maxpackets))
         return
     }
-    if(req.Packets > *maxpackets)  {
-        fmt.Println("Invalid Capture size.  packets cannot be > than maxpackets which is " + strconv.Itoa(*maxpackets))
-        log.Println("Invalid Capture size.  packets cannot be > than maxpackets which is " + strconv.Itoa(*maxpackets))
+    if(req.Packets > config.Gen.Maxpackets)  {
+        fmt.Println("Invalid Capture size.  packets cannot be > than maxpackets which is " + strconv.Itoa(config.Gen.Maxpackets))
+        log.Println("Invalid Capture size.  packets cannot be > than maxpackets which is " + strconv.Itoa(config.Gen.Maxpackets))
         return
     }
 
@@ -97,6 +98,11 @@ func captureToBuffer(req Capmsg)  {
         timeout = req.Timeout * time.Second
     }
 
+    // If snaplength is not overridden in the message then use the system default
+    if(req.Snap == 0)  {
+        req.Snap = config.Gen.Snap
+    }
+
     log.Println("Capturing " + strconv.Itoa(req.Packets) + " packets on interface " + req.Interface + " with a snaplength of " + strconv.Itoa(req.Snap))
     fmt.Println("Capturing " + strconv.Itoa(req.Packets) + " packets on interface " + req.Interface + " with a snaplength of " + strconv.Itoa(req.Snap))
 
@@ -140,19 +146,43 @@ func captureToBuffer(req Capmsg)  {
         }
     }
 
-    fmt.Println("Returning from capture")
 
-    if(*wLocal)  {
-        ferr := ioutil.WriteFile(*destdir + "/" + fileName, f.Bytes(), 0644)
+    // Handle Tags 
+    // First time I'm touching tagstr which is why I don't check for empty
+    if(req.Customer != "")  {
+        tagstr = "customer:" + req.Customer
+    }
+
+    if(req.Alertid != 0 && tagstr == "")  {
+        tagstr = "alertid:" + strconv.Itoa(req.Alertid)
+    } else if(req.Alertid != 0 && tagstr != "") {
+        tagstr = tagstr + ",alertid:" + strconv.Itoa(req.Alertid)
+    }
+
+    if(req.Tags != "" &&  tagstr == "")  {
+        tagstr = req.Tags 
+    } else if(req.Tags != "" &&  tagstr != "") {
+        tagstr = tagstr + "," + req.Tags 
+    }
+
+    if(tagstr == "")  {
+        tagstr = "node:" + hostname + ",interface:" + req.Interface + ",snaplength:" + strconv.Itoa(req.Snap)
+    } else {
+        tagstr = tagstr + ",node:" + hostname + ",interface:" + req.Interface + ",snaplength:" + strconv.Itoa(req.Snap)
+    }
+
+    if(config.Gen.Writelocal)  {
+        ferr := ioutil.WriteFile(config.Gen.Localdir + "/" + fileName, f.Bytes(), 0644)
         if(ferr != nil)  {
             fmt.Printf("Error writing file: %s", ferr)
             log.Printf("Error writing file: %s", ferr)
         }
     }
 
-    if(*upPtr)  {
-        postBufferCloudshark(*csschemePtr, *cshostPtr, *cstokenPtr, f, fileName)
+    if(config.Cs.Upload)  {
+        postBufferCloudshark(config.Cs.Scheme, config.Cs.Host, config.Cs.Token, f, fileName, tagstr)
     }
 
+    fmt.Println("Returning from capture")
     return
 }
