@@ -82,4 +82,4 @@ alias       = ["local"]
 ## Instaling / Running 
 ```
 #go install
-#sudo pcapdaemon -config /path/to/your/config
+#sudo daemonize -o stdout.log -e stderr.log /path/pcapdaemon -config /path/to/your/config
