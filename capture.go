@@ -171,7 +171,7 @@ func captureToBuffer(req Capmsg, iface string)  {
     }
 
     if(config.Cs.Upload)  {
-        postBufferCloudshark(config.Cs.Scheme, config.Cs.Host, config.Cs.Token, f, fileName, tagstr)
+        postBufferCloudshark(config.Cs.Scheme, config.Cs.Host, config.Cs.Port, config.Cs.Token, f, fileName, tagstr)
     }
 
     fmt.Println("Returning from capture")
