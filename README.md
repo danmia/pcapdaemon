@@ -79,7 +79,7 @@ alias       = ["main", "public"]
 name        = "lo"
 alias       = ["local"]
 ```
-## Instaling / Running 
+## Installing / Running 
 ```
 #go install
 #sudo daemonize -o stdout.log -e stderr.log /path/pcapdaemon -config /path/to/your/config
