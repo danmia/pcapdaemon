@@ -65,7 +65,8 @@ host        = "node.running.redis.net"
 port        = 6379
 channel     = "capture"
 
-# consult /usr/include/sys/syslog.h for Priority
+# consult /usr/include/sys/syslog.h for Priority which is a combination 
+# of facility and severity
 [syslog]
 priority    = 85
 tag         = pcapdaemon
