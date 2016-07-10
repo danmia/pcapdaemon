@@ -65,6 +65,10 @@ host        = "node.running.redis.net"
 port        = 6379
 channel     = "capture"
 
+[syslog]
+priority    = 85
+tag         = pcapdaemon
+
 [[interface]]
 name        = "eth0"
 alias       = ["main", "public"]
