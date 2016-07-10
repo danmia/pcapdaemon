@@ -73,3 +73,7 @@ alias       = ["main", "public"]
 name        = "lo"
 alias       = ["local"]
 ```
+## Instaling / Running 
+```
+#go install
+#
