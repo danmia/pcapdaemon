@@ -44,6 +44,7 @@ This is a daemon that will subscribe to a redis pub/sub channel for requests to 
  * alertid - An integer ID for the event or alert or whatever you're tracking (not required)
  * timeout - Number of seconds to let capture last should the number of packets not get hit.  Integer.
 
+## Configuration File format (toml)
 ``` 
 ## Config file
 [general]
