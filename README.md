@@ -42,8 +42,7 @@ This is a daemon that will subscribe to a redis pub/sub channel for requests to 
  * snap - Snaplength or amount to capture into the packet.  Integer.
  * packets - Number of packets to capture.  Integer.
  * alertid - An integer ID for the event or alert or whatever you're tracking (not required)
- * timeout - Number of seconds to let capture last should the number of packets not get hit.  Integer
- * 
+ * timeout - Number of seconds to let capture last should the number of packets not get hit.  Integer.
 
 ``` 
 ## Config file
