@@ -23,6 +23,15 @@ var config tomlConfig
 var ifmap = map[string]pcap.Interface{}
 var almap = map[string]string{}
 
+
+type logWriter struct {
+}
+
+func (writer logWriter) Write(bytes []byte) (int, error) {
+    // return fmt.Print(time.Now().UTC().Format("2006-01-02T15:04:05.999Z") + " [DEBUG] " + string(bytes))
+    return fmt.Print(string(bytes))
+}
+
 func updateInterfaceMap()  {
     
     x, ierr := pcap.FindAllDevs() 
@@ -98,6 +107,15 @@ func validateOptions(c tomlConfig)  {
         } 
     }
 
+    // validate syslog
+    if(c.Log.Priority == 0)  {
+        c.Log.Priority = 85
+    }
+
+    if(c.Log.Tag == "")  {
+        c.Log.Tag = "pcapdaemon"
+    }
+
     
 }
 
@@ -130,11 +148,6 @@ func main() {
                 log.Fatal(err)
             }
         }
-    }
-
-    logwriter, e := syslog.New(syslog.LOG_NOTICE, "pcapdaemon")
-    if e == nil {
-        log.SetOutput(logwriter)
     }
 
     // create interface map
@@ -180,6 +193,12 @@ func main() {
 
     // Run the validator AFTER defaults and config have been processed
     validateOptions(config)
+
+    log.SetFlags(0)
+    logwriter, e := syslog.New(syslog.Priority(config.Log.Priority), config.Log.Tag)
+    if e == nil {
+        log.SetOutput(logwriter)
+    }
 
     hostname, _ = os.Hostname()
     // Channel for thread sync

@@ -58,6 +58,6 @@ type Redis struct  {
 }
 
 type Syslog struct {
-    Priority    string      `toml:"priority"`
+    Priority    int         `toml:"priority"`
     Tag         string      `toml:"tag"`
 }
