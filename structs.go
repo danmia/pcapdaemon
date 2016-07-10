@@ -7,8 +7,8 @@ import (
 type Capmsg struct  {
     Node            string          `json:"node,omitempty"`
     Nodere          string          `json:"nodere,omitempty"`
-    Interface       string          `json:"interface,omitempty"`
-    Interalias      string          `json:"interalias,omitempty"`
+    Interface       []string        `json:"interface,omitempty"`
+    Alias           []string        `json:"alias,omitempty"`
     Tags            string          `json:"tags,omitempty"`
     Bpf             string          `json:"bpf,omitempty"`
     Customer        string          `json:"customer,omitempty"`

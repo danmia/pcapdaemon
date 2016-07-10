@@ -15,7 +15,7 @@ import (
 )
 
 
-func captureToBuffer(req Capmsg)  {
+func captureToBuffer(req Capmsg, iface string)  {
 
     var (
         snapshotLen     int32  = 1500
@@ -29,15 +29,6 @@ func captureToBuffer(req Capmsg)  {
         tagstr          string
         matchNode       bool = false
     )
-
-    if _, ok := ifmap[req.Interface]; ok  {
-        log.Println("Interface " + req.Interface + " exists in interface map")
-        fmt.Println("Interface " + req.Interface + " exists in interface map")
-    } else {
-        log.Println("Interface " + req.Interface + " does not exist in interface map")
-        fmt.Println("Interface " + req.Interface + " does not exist in interface map")
-        return;
-    }
 
     // Do sanity checking on max number of packets
     if(req.Packets == 0)  {
@@ -103,20 +94,20 @@ func captureToBuffer(req Capmsg)  {
         req.Snap = config.Gen.Snap
     }
 
-    log.Println("Capturing " + strconv.Itoa(req.Packets) + " packets on interface " + req.Interface + " with a snaplength of " + strconv.Itoa(req.Snap))
-    fmt.Println("Capturing " + strconv.Itoa(req.Packets) + " packets on interface " + req.Interface + " with a snaplength of " + strconv.Itoa(req.Snap))
+    log.Println("Capturing " + strconv.Itoa(req.Packets) + " packets on interface " + iface + " with a snaplength of " + strconv.Itoa(req.Snap))
+    fmt.Println("Capturing " + strconv.Itoa(req.Packets) + " packets on interface " + iface + " with a snaplength of " + strconv.Itoa(req.Snap))
 
-    fileName = hostname + "-" + req.Interface + "-" + strconv.FormatInt(time.Now().Unix(), 10) + ".pcap"
+    fileName = hostname + "-" + iface + "-" + strconv.FormatInt(time.Now().Unix(), 10) + ".pcap"
 
     var f bytes.Buffer
     w := pcapgo.NewWriter(&f)
     w.WriteFileHeader(uint32(snapshotLen), layers.LinkTypeEthernet)
     
     // Open the device for capturing
-    handle, err = pcap.OpenLive(req.Interface, int32(req.Snap), promiscuous, timeout)
+    handle, err = pcap.OpenLive(iface, int32(req.Snap), promiscuous, timeout)
     if err != nil {
-        fmt.Printf("Error opening device %s: %v", req.Interface, err)
-        log.Printf("Error opening device %s: %v", req.Interface, err)
+        fmt.Printf("Error opening device %s: %v", iface, err)
+        log.Printf("Error opening device %s: %v", iface, err)
     }
     if(req.Bpf != "")  {
         err := handle.SetBPFFilter(req.Bpf); 
@@ -166,9 +157,9 @@ func captureToBuffer(req Capmsg)  {
     }
 
     if(tagstr == "")  {
-        tagstr = "node:" + hostname + ",interface:" + req.Interface + ",snaplength:" + strconv.Itoa(req.Snap)
+        tagstr = "node:" + hostname + ",interface:" + iface + ",snaplength:" + strconv.Itoa(req.Snap)
     } else {
-        tagstr = tagstr + ",node:" + hostname + ",interface:" + req.Interface + ",snaplength:" + strconv.Itoa(req.Snap)
+        tagstr = tagstr + ",node:" + hostname + ",interface:" + iface + ",snaplength:" + strconv.Itoa(req.Snap)
     }
 
     if(config.Gen.Writelocal)  {

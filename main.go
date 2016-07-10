@@ -21,6 +21,7 @@ var maxpackets *int
 var config tomlConfig
 
 var ifmap = map[string]pcap.Interface{}
+var almap = map[string]string{}
 
 func updateInterfaceMap()  {
     
@@ -90,7 +91,11 @@ func validateOptions(c tomlConfig)  {
         if(len(v.Alias) == 0)  {
             fmt.Println("Warning:  Interface [" + v.Name + "] has no aliases");
             log.Println("Warning:  Interface [" + v.Name + "] has no aliases");
-        }
+        } else {
+            for _,av := range v.Alias  {
+                almap[av] = v.Name
+            }  
+        } 
     }
 
     

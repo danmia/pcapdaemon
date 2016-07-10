@@ -12,7 +12,7 @@ token       = "fffffffffffffffffff"
 upload      = true
 
 [redis]
-host        = "node.running.redis.net
+host        = "node.running.redis.net"
 port        = 6379
 channel     = "capture"
 

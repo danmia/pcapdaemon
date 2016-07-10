@@ -33,9 +33,29 @@ func subToRedis(server string, port int, subchannel string) {
             if err := json.Unmarshal(v.Data, &msg); err != nil {
                 fmt.Println(err)
             } else {
-                go func() {
-                    captureToBuffer(msg);
-                }()
+                if(len(msg.Interface) > 0)  {
+                    for _, v := range msg.Interface  {
+                        if _, ok := ifmap[v]; ok  {
+                            log.Println("Interface " + v + " exists in interface map")
+                            fmt.Println("Interface " + v + " exists in interface map")
+                            go captureToBuffer(msg, v);
+                        } else {
+                            log.Println("Interface " + v + " does not exist in interface map")
+                            fmt.Println("Interface " + v + " does not exist in interface map")
+                        }            
+                    }
+                } else if(len(msg.Alias) > 0)  {
+                    for _,v := range msg.Alias  {
+                        if _, ok := almap[v]; ok  {
+                            log.Println("Alias " + v + " exists in alias map")
+                            fmt.Println("Alias " + v + " exists in alias map")
+                            go captureToBuffer(msg, almap[v]);
+                        } else {
+                            log.Println("Alias " + v + " does not exist in alias map")
+                            fmt.Println("Alias " + v + " does not exist in alias map")
+                        }
+                    }
+                }
             }
         case redis.Subscription:
             fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
