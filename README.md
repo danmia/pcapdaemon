@@ -32,7 +32,7 @@ This is a daemon that will subscribe to a redis pub/sub channel for requests to 
         "timeout": 15
     }
     
- * node - node name to capture on (exact match) Use either node or nodere but not both and one is required.
+ * node - node name to capture on (exact match) Use either node or nodere but not both and one is required. Keyword: "any" matches any host
  * nodere - node regex to capture on.  Use either node or nodere but not both and one is required.
  * interface - an array of interfaces to dump on. (Must supply either interface or alias but not both)
  * alias - an array of interface aliases to dump on.  (Must supply either interface or alias but not both)
@@ -45,6 +45,7 @@ This is a daemon that will subscribe to a redis pub/sub channel for requests to 
  * timeout - Number of seconds to let capture last should the number of packets not get hit.  Integer.
 
 ## Configuration File format (toml)
+ * Defining interfaces is optional.  You only need to do it if you'd like to use an alias.  The basic use case is to group catpure interfaces across several nodes that may have different physical names for a variety of reasons.
 ``` 
 ## Config file
 [general]
