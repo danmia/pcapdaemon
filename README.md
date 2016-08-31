@@ -55,7 +55,7 @@ localdir    = "/tmp"
 snaplength  = 500
 
 [cloudshark]
-host        = "cloudshark.org"
+host        = "www.cloudshark.org"
 scheme      = "https"
 port        = 443
 token       = "fffffffffffffffffff"
@@ -70,7 +70,7 @@ channel     = "capture"
 # of facility and severity
 [syslog]
 priority    = 85
-tag         = pcapdaemon
+tag         = "pcapdaemon"
 
 [[interface]]
 name        = "eth0"
