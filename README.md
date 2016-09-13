@@ -82,5 +82,6 @@ alias       = ["local"]
 ```
 ## Installing / Running 
 ```
+#go get
 #go install
 #sudo daemonize -o stdout.log -e stderr.log /path/pcapdaemon -config /path/to/your/config
