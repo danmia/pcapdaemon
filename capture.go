@@ -174,6 +174,50 @@ func captureToBuffer(req Capmsg, iface string)  {
         postBufferCloudshark(config.Cs.Scheme, config.Cs.Host, config.Cs.Port, config.Cs.Token, f, fileName, tagstr)
     }
 
+	if(config.Aws.Upload)  {
+		var msgfolder string
+		var msgbucket string
+		var msgacl string
+		var msgregion string
+		var msgep string
+
+		if(req.Bucket != "")  {
+			msgbucket = req.Bucket
+		} else {
+			msgbucket = *config.Aws.Bucket
+		}
+	
+		if(req.Folder != "")  {
+            msgfolder = req.Folder
+        } else {
+            msgfolder = *config.Aws.Folder
+        }
+
+		if(req.Acl != "")  {
+            msgacl = req.Acl
+        } else {
+            msgacl = *config.Aws.Acl
+        }
+
+		if(req.Region != "")  {
+            msgregion = req.Region
+        } else {
+            msgregion = *config.Aws.Region
+        }
+	
+		if(req.Endpoint != "")  {
+            msgep = req.Endpoint
+        } else {
+            msgep = *config.Aws.Endpoint
+        }
+
+		msgconfig := awsconfig
+		msgconfig.Region = &msgregion	
+        msgconfig.Endpoint = &msgep
+
+		postS3(*msgconfig, msgbucket, f, fileName, tagstr, msgfolder, msgacl)
+	}
+
     fmt.Println("Returning from capture")
     return
 }

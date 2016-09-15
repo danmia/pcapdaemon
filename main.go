@@ -8,6 +8,10 @@ import (
     "log/syslog" 
     "github.com/google/gopacket/pcap"
     "github.com/BurntSushi/toml"
+
+	// setup aws config
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 
 var cshostPtr *string
@@ -19,7 +23,7 @@ var destdir *string
 var hostname string
 var maxpackets *int
 var config tomlConfig
-
+var awsconfig *aws.Config
 var ifmap = map[string]pcap.Interface{}
 var almap = map[string]string{}
 
@@ -48,6 +52,43 @@ func updateInterfaceMap()  {
 }
 
 func validateOptions(c tomlConfig)  {
+
+	if(!c.Aws.Upload && !c.Cs.Upload && !c.Gen.Writelocal)  {
+		log.Printf("Error.  You must enable at least one of the following: Cloudshar, S3 or Writelocal\n")
+		os.Exit(1)
+	}
+	
+	// S3 configs
+	if(c.Aws.Upload)  {
+		if(c.Aws.AccessId == nil || c.Aws.AccessKey == nil)  {
+			log.Fatal("You must supply an accesskey and accessid to use S3 ")
+		}	
+		if(c.Aws.Endpoint == nil || c.Aws.Bucket == nil)  {
+			log.Fatal("You must supply an endpoint and a default bucket to use S3 ")
+		}
+		if(c.Aws.Region == nil)  {
+            log.Fatal("You must supply a Region to use S3 ")
+        }
+
+		if(c.Aws.Acl == nil)  {
+			// default acl to private
+			*c.Aws.Acl = "private"
+		}
+		
+		dest := new(bool)
+		*dest = true
+		ll := new(aws.LogLevelType)
+		*ll = 1
+
+		awsconfig = &aws.Config{
+			Region:           c.Aws.Region,
+            Endpoint:         c.Aws.Endpoint,
+            S3ForcePathStyle: dest,               // <-- without these lines. All will fail! fork you aws!
+            Credentials:      credentials.NewStaticCredentials(*c.Aws.AccessId, *c.Aws.AccessKey, ""),
+            LogLevel:         ll,
+        }
+	}
+
 
     // Redis configs
     if(c.R.Host == "")  {

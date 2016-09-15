@@ -17,12 +17,18 @@ type Capmsg struct  {
     Alertid         int             `json:"alertid,omitempty"`
     Alertstr        int             `json:"alertstr,omitempty"`
     Timeout         time.Duration   `json:"timeout,omitempty"`
+    Folder			string          `json:"folder,omitempty"`
+    Bucket			string          `json:"bucket,omitempty"`
+	Acl				string			`json:"acl,omitempty"`	
+	Region			string			`json:"region,omitempty"`
+	Endpoint		string			`json:"endpoint,omitempty"`
 }
 
 type Capmsgs []Capmsg
 
 type tomlConfig struct {
     Gen     General             `toml:"general"`
+    Aws		S3					`toml:"s3"`
     Cs      Cloudshark          `toml:"cloudshark"`
     R       Redis               `toml:"redis"`
     Ifmap   InterfaceAliases    `toml:"interface"`
@@ -60,4 +66,15 @@ type Redis struct  {
 type Syslog struct {
     Priority    int         `toml:"priority"`
     Tag         string      `toml:"tag"`
+}
+
+type S3 struct {
+	AccessId	*string		`toml:"accessid"`
+	AccessKey	*string		`toml:"accesskey"`
+	Endpoint	*string		`toml:"endpoint"`
+	Region		*string		`toml:"region"`
+	Bucket		*string		`toml:"bucket"`
+	Folder		*string		`toml:"pcaps"`
+	Upload		bool		`toml:"upload"`
+	Acl			*string		`toml:"acl"`
 }

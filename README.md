@@ -79,6 +79,16 @@ alias       = ["main", "public"]
 [[interface]]
 name        = "lo"
 alias       = ["local"]
+
+[s3]
+accessid = "xxxxxxxxxxxxxxxxxxxxxxxxx"
+accesskey = "xxxxxxxxxxxxxxxxxxxxxxx"
+endpoint = "s3.amazonaws.com"
+bucket = "pcapdaemon"
+folder = "pcaps"
+upload = true
+region = "us-east-1"
+acl	= "private"
 ```
 ## Installing / Running 
 ```
