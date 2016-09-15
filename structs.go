@@ -22,6 +22,7 @@ type Capmsg struct  {
 	Acl				string			`json:"acl,omitempty"`	
 	Region			string			`json:"region,omitempty"`
 	Endpoint		string			`json:"endpoint,omitempty"`
+	Encryption		bool			`json:"encryption,omitempty"`
 }
 
 type Capmsgs []Capmsg
@@ -77,4 +78,5 @@ type S3 struct {
 	Folder		*string		`toml:"pcaps"`
 	Upload		bool		`toml:"upload"`
 	Acl			*string		`toml:"acl"`
+	Encryption	*bool		`toml:"encryption"`
 }

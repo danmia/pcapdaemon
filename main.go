@@ -74,6 +74,11 @@ func validateOptions(c tomlConfig)  {
 			// default acl to private
 			*c.Aws.Acl = "private"
 		}
+
+		if(c.Aws.Encryption == nil)  {
+			// set encryption default
+			*c.Aws.Encryption = false
+		}
 		
 		dest := new(bool)
 		*dest = true

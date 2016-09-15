@@ -180,6 +180,7 @@ func captureToBuffer(req Capmsg, iface string)  {
 		var msgacl string
 		var msgregion string
 		var msgep string
+		var msgenc bool
 
 		if(req.Bucket != "")  {
 			msgbucket = req.Bucket
@@ -211,11 +212,18 @@ func captureToBuffer(req Capmsg, iface string)  {
             msgep = *config.Aws.Endpoint
         }
 
+		fmt.Println("Enc: ", req.Encryption)
+		if(req.Encryption)  {
+            msgenc = req.Encryption
+        } else {
+            msgenc = *config.Aws.Encryption
+        }
+
 		msgconfig := awsconfig
 		msgconfig.Region = &msgregion	
         msgconfig.Endpoint = &msgep
 
-		postS3(*msgconfig, msgbucket, f, fileName, tagstr, msgfolder, msgacl)
+		postS3(*msgconfig, msgbucket, f, fileName, tagstr, msgfolder, msgacl, msgenc)
 	}
 
     fmt.Println("Returning from capture")

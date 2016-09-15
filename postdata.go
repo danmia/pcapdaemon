@@ -94,7 +94,7 @@ func postBufferCloudshark(scheme string, host string, port int, token string, bu
     }
 }
 
-func postS3(config aws.Config, bucket string, buf bytes.Buffer, filename string, tags string, folder string, acl string)  {
+func postS3(config aws.Config, bucket string, buf bytes.Buffer, filename string, tags string, folder string, acl string, enc bool)  {
 	
 	s3sess, err := session.NewSession(&config)
 	if err != nil {
@@ -118,6 +118,11 @@ func postS3(config aws.Config, bucket string, buf bytes.Buffer, filename string,
         Metadata: map[string]*string{
 			"tags": aws.String(tags), //required
         },
+	}
+
+	// Set the encryption if true
+	if(enc)  {
+		params.ServerSideEncryption = aws.String("AES256")
 	}
 
     result, err := s3client.PutObject(params)

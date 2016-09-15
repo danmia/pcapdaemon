@@ -12,5 +12,6 @@
 	"bucket": "mybucket",
 	"acl": "public-read",
 	"region": "us-east-1",
-	"endpoint": "s3.amazonaws.com"
+	"endpoint": "s3.amazonaws.com",
+	"encryption": true
 }
