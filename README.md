@@ -59,6 +59,7 @@ This is a daemon that will subscribe to a redis pub/sub channel for requests to 
 
 ## Configuration File format (toml)
  * Defining interfaces is optional.  You only need to do it if you'd like to use an alias.  The basic use case is to group catpure interfaces across several nodes that may have different physical names for a variety of reasons.
+ * Redis auth is optional as are ALL of the S3 options 
 ``` 
 ## Config file
 [general]
@@ -78,6 +79,7 @@ upload      = true
 host        = "node.running.redis.net"
 port        = 6379
 channel     = "capture"
+auth		= "password"
 
 # consult /usr/include/sys/syslog.h for Priority which is a combination 
 # of facility and severity
