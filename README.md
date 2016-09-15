@@ -50,8 +50,8 @@ This is a daemon that will subscribe to a redis pub/sub channel for requests to 
  * timeout - Number of seconds to let capture last should the number of packets not get hit.  Integer.
  * folder - S3 folder inside your bucket // S3 ONLY
  * bucket - S3 bucket // S3 ONLY
- * folder - S3 ACL // S3 ONLY
- * folder - S3 Endpoint // S3 ONLY
+ * acl - S3 ACL // S3 ONLY
+ * endpoint - S3 Endpoint // S3 ONLY
 
 ## Configuration File format (toml)
  * Defining interfaces is optional.  You only need to do it if you'd like to use an alias.  The basic use case is to group catpure interfaces across several nodes that may have different physical names for a variety of reasons.
