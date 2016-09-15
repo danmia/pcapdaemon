@@ -252,7 +252,7 @@ func main() {
 
     go func()  {
         log.Println("Starting Redis Thread")
-        subToRedis(config.R.Host, config.R.Port, config.R.Channel)
+        subToRedis(config.R.Host, config.R.Port, config.R.Channel, config.R.Auth)
         done <- true
     }()
 

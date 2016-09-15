@@ -5,6 +5,8 @@ import (
     "fmt"
     "log"
     "strconv"
+	"strings"
+	"time"
     "encoding/json"
     "github.com/garyburd/redigo/redis"
 )
@@ -12,7 +14,7 @@ import (
 var c redis.Conn
 var gerr error
 
-func subToRedis(server string, port int, subchannel string) {
+func subToRedis(server string, port int, subchannel string, auth string) {
 
     fmt.Println("Attempting connect to " + server) 
     c, gerr = redis.Dial("tcp", server + ":" + strconv.Itoa(port))
@@ -22,6 +24,18 @@ func subToRedis(server string, port int, subchannel string) {
         os.Exit(1) 
     }
     fmt.Println("Connected to " + server) 
+
+	
+	// Handle Redis Auth if applicable
+	if(auth != "")  {
+		_, err := c.Do("AUTH", "blah")
+		if err != nil {
+			// handle error
+			log.Println("Failed redis auth: ", err)
+			fmt.Println("Failed redis auth: ", err)
+		}
+	}
+
     psc := redis.PubSubConn{c}
     psc.Subscribe(subchannel)
 
@@ -61,6 +75,35 @@ func subToRedis(server string, port int, subchannel string) {
             fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
         case error:
             fmt.Printf("Error: %s\n", v)
+			if(strings.Contains(v.Error(), "network"))  {
+				fmt.Println("We have a network issue")
+				for {
+					time.Sleep(time.Second * 3)
+					c, gerr = redis.Dial("tcp", server + ":" + strconv.Itoa(port))
+					if gerr != nil {
+						fmt.Printf("Error reconnecting: %s\n", gerr)
+						log.Printf("Error reconnecting to redis: %s\n", gerr)
+					} else {
+						fmt.Println("Reconnected to " + server)
+						log.Println("Reconnected to " + server)
+
+						// Handle Redis Auth if applicable
+						if(auth != "")  {
+							_, err := c.Do("AUTH", "blah")
+							if err != nil {
+								// handle error
+								log.Println("Failed redis auth on reconnect: ", err)
+								fmt.Println("Failed redis auth on reconnect: ", err)
+							}
+						}
+
+						psc = redis.PubSubConn{c}
+						psc.Subscribe(subchannel)
+						break
+					}
+
+				}
+			}
         }
 
     }

@@ -62,6 +62,7 @@ type Redis struct  {
     Host        string      `toml:"host"`
     Port        int         `toml:"port"`
     Channel     string      `toml:"channel"`
+	Auth		string		`toml:"auth"`
 }
 
 type Syslog struct {
