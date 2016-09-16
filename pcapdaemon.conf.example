@@ -12,6 +12,7 @@ token       = "fffffffffffffffffff"
 upload      = true
 
 [redis]
+listen		= true
 host        = "node.running.redis.net"
 port        = 6379
 channel     = "capture"
@@ -30,12 +31,21 @@ name        = "lo"
 alias       = ["local"]
 
 [s3]
-accessid = "xxxxxxxxxxxxxxxxxxxxxxxxx"
-accesskey = "xxxxxxxxxxxxxxxxxxxxxxx"
-endpoint = "s3.amazonaws.com"
-bucket = "pcapdaemon"
-folder = "pcaps"
-upload = true
-region = "us-east-1"
-acl = "private"
-encryption = false
+accessid	= "xxxxxxxxxxxxxxxxxxxxxxxxx"
+accesskey	= "xxxxxxxxxxxxxxxxxxxxxxx"
+endpoint	= "s3.amazonaws.com"
+bucket		= "pcapdaemon"
+folder		= "pcaps"
+upload		= true
+region		= "us-east-1"
+acl			= "private"
+encryption	= false
+
+[sqs]
+listen      = true
+region      = "us-east-1"
+accessid    = "xxxxxxxxxxxxxxxxxxxxxxxxx"
+accesskey   = "xxxxxxxxxxxxxxxxxxxxxxx"
+url         = "https://example.amazone.com/asdfasdf/myqueue"
+waitseconds = 20
+chunksize   = 10

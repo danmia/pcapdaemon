@@ -16,14 +16,14 @@ var gerr error
 
 func subToRedis(server string, port int, subchannel string, auth string) {
 
-    fmt.Println("Attempting connect to " + server) 
+    fmt.Println("Attempting connect to Redis: " + server) 
     c, gerr = redis.Dial("tcp", server + ":" + strconv.Itoa(port))
     if gerr != nil {
-        fmt.Printf("Error connecting: %s\n", gerr)
+        fmt.Printf("Error connecting to redis: %s\n", gerr)
         log.Printf("Error connecting to redis: %s\n", gerr)
         os.Exit(1) 
     }
-    fmt.Println("Connected to " + server) 
+    fmt.Println("Connected to Redis: " + server) 
 
 	
 	// Handle Redis Auth if applicable
@@ -43,9 +43,9 @@ func subToRedis(server string, port int, subchannel string, auth string) {
         var msg Capmsg
         switch v := psc.Receive().(type) {
         case redis.Message:
-            fmt.Printf("%s: message: %s\n", v.Channel, v.Data)
+            fmt.Printf("Redis: %s: message: %s\n", v.Channel, v.Data)
             if err := json.Unmarshal(v.Data, &msg); err != nil {
-                fmt.Println(err)
+                fmt.Println("Redis: ", err)
             } else {
                 if(len(msg.Interface) > 0)  {
                     for _, v := range msg.Interface  {
@@ -72,28 +72,28 @@ func subToRedis(server string, port int, subchannel string, auth string) {
                 }
             }
         case redis.Subscription:
-            fmt.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
+            fmt.Printf("Redis:  %s: %s %d\n", v.Channel, v.Kind, v.Count)
         case error:
-            fmt.Printf("Error: %s\n", v)
+            fmt.Printf("Redis Error: %s\n", v)
 			if(strings.Contains(v.Error(), "network"))  {
-				fmt.Println("We have a network issue")
+				fmt.Println("Redis:  We have a network issue")
 				for {
 					time.Sleep(time.Second * 3)
 					c, gerr = redis.Dial("tcp", server + ":" + strconv.Itoa(port))
 					if gerr != nil {
-						fmt.Printf("Error reconnecting: %s\n", gerr)
-						log.Printf("Error reconnecting to redis: %s\n", gerr)
+						fmt.Printf("Redis:  Error reconnecting: %s\n", gerr)
+						log.Printf("Redis:  Error reconnecting to redis: %s\n", gerr)
 					} else {
-						fmt.Println("Reconnected to " + server)
-						log.Println("Reconnected to " + server)
+						fmt.Println("Redis:  Reconnected to " + server)
+						log.Println("Redis:  Reconnected to " + server)
 
 						// Handle Redis Auth if applicable
 						if(auth != "")  {
 							_, err := c.Do("AUTH", "blah")
 							if err != nil {
 								// handle error
-								log.Println("Failed redis auth on reconnect: ", err)
-								fmt.Println("Failed redis auth on reconnect: ", err)
+								log.Println("Redis:  Failed redis auth on reconnect: ", err)
+								fmt.Println("Redis:  Failed redis auth on reconnect: ", err)
 							}
 						}
 

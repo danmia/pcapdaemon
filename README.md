@@ -1,7 +1,7 @@
 # pcapdaemon
 
 ## Description
-This is a daemon that will subscribe to a redis pub/sub channel for requests to capture.  It will capture and then optionally upload to Cloudshark or save to the local filesystem.  It could really be adapted to upload anywhere but the key was that I wanted to be able to trigger captures based on any number of events (traps, log events etc) via a lightweight mechanism.  A design goal was to have it capture into a buffer in memory and post the buffer without adding any kind of filesystem/io dependency.  
+This is a daemon that will subscribe to a redis pub/sub channel or amazon SQS topic for requests to capture.  It will capture and then optionally upload to Cloudshark, Amazon S3 or save to the local filesystem.  It could really be adapted to upload anywhere but the key was that I wanted to be able to trigger captures based on any number of events (traps, log events etc) via a lightweight mechanism.  A design goal was to have it capture into a buffer in memory and post the buffer without adding any kind of filesystem/io dependency.  
 
 ## Options
     -cshost string          cloudshark host (default "localhost")
@@ -60,6 +60,11 @@ This is a daemon that will subscribe to a redis pub/sub channel for requests to 
 ## Configuration File format (toml)
  * Defining interfaces is optional.  You only need to do it if you'd like to use an alias.  The basic use case is to group catpure interfaces across several nodes that may have different physical names for a variety of reasons.
  * Redis auth is optional as are ALL of the S3 options 
+ * You must set listen to "true" for either Redis or SQS.  You can use both.
+ * You must enable one of the following Cloudshark, S3 or writelocal
+ * SQS support is implemented using long poll
+ * SQS chunksize is the number of messages to process at once.  This could end up being the number of simultaneous captures so use with care
+ * Given the time sensitive nature of capture messages, I recommend setting Default visibility timeout to 10 seconds and setting the message retention period to no more than 1 minute (these are in queue configuration in AWS SQS gui)
 ``` 
 ## Config file
 [general]
@@ -76,6 +81,7 @@ token       = "fffffffffffffffffff"
 upload      = true
 
 [redis]
+listen		= true
 host        = "node.running.redis.net"
 port        = 6379
 channel     = "capture"
@@ -96,15 +102,24 @@ name        = "lo"
 alias       = ["local"]
 
 [s3]
-accessid = "xxxxxxxxxxxxxxxxxxxxxxxxx"
-accesskey = "xxxxxxxxxxxxxxxxxxxxxxx"
-endpoint = "s3.amazonaws.com"
-bucket = "pcapdaemon"
-folder = "pcaps"
-upload = true
-region = "us-east-1"
-acl	= "private"
-encryption = false
+accessid	= "xxxxxxxxxxxxxxxxxxxxxxxxx"
+accesskey	= "xxxxxxxxxxxxxxxxxxxxxxx"
+endpoint	= "s3.amazonaws.com"
+bucket		= "pcapdaemon"
+folder		= "pcaps"
+upload		= true
+region		= "us-east-1"
+acl			= "private"
+encryption	= false
+
+[sqs]
+listen		= true
+region		= "us-east-1"
+accessid	= "xxxxxxxxxxxxxxxxxxxxxxxxx"
+accesskey	= "xxxxxxxxxxxxxxxxxxxxxxx"
+url			= "https://example.amazone.com/asdfasdf/myqueue"
+waitseconds = 20
+chunksize	= 10
 ```
 ## Installing / Running 
 ```

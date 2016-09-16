@@ -30,6 +30,7 @@ type Capmsgs []Capmsg
 type tomlConfig struct {
     Gen     General             `toml:"general"`
     Aws		S3					`toml:"s3"`
+	AwsSqs	Sqs					`toml:"sqs"`
     Cs      Cloudshark          `toml:"cloudshark"`
     R       Redis               `toml:"redis"`
     Ifmap   InterfaceAliases    `toml:"interface"`
@@ -63,6 +64,7 @@ type Redis struct  {
     Port        int         `toml:"port"`
     Channel     string      `toml:"channel"`
 	Auth		string		`toml:"auth"`
+	Listen		bool		`toml:"listen"`
 }
 
 type Syslog struct {
@@ -80,4 +82,14 @@ type S3 struct {
 	Upload		bool		`toml:"upload"`
 	Acl			*string		`toml:"acl"`
 	Encryption	*bool		`toml:"encryption"`
+}
+
+type Sqs struct {
+    AccessId    *string     `toml:"accessid"`
+    AccessKey   *string     `toml:"accesskey"`
+    Region      *string     `toml:"region"`
+	Url			*string		`toml:"url"`
+	Waitseconds	*int64		`toml:"waitseconds"`
+	Chunksize	*int64		`toml:"chunksize"`
+	Listen		bool		`toml:"listen"`
 }
