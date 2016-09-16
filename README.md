@@ -1,7 +1,7 @@
 # pcapdaemon
 
 ## Description
-This is a daemon that will subscribe to a redis pub/sub channel or amazon SQS topic for requests to capture.  It will capture and then optionally upload to Cloudshark, Amazon S3 or save to the local filesystem.  It could really be adapted to upload anywhere but the key was that I wanted to be able to trigger captures based on any number of events (traps, log events etc) via a lightweight mechanism.  A design goal was to have it capture into a buffer in memory and post the buffer without adding any kind of filesystem/io dependency.  
+This is a daemon that will subscribe to a redis pub/sub channel or amazon SQS queue for requests to capture.  It will capture and then optionally upload to Cloudshark, Amazon S3 or save to the local filesystem.  It could really be adapted to upload anywhere but the key was that I wanted to be able to trigger captures based on any number of events (traps, log events etc) via a lightweight mechanism.  A design goal was to have it capture into a buffer in memory and post the buffer without adding any kind of filesystem/io dependency.  
 
 ## Options
     -cshost string          cloudshark host (default "localhost")
