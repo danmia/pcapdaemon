@@ -91,6 +91,8 @@ func postBufferCloudshark(scheme string, host string, port int, token string, bu
         fmt.Println(resp.StatusCode)
         fmt.Println(resp.Header)
         fmt.Println(body)
+        log.Println("Successfully uploaded ", filename, " to Cloudshark")
+        fmt.Println("Successfully uploaded ", filename, " to Cloudshark")
     }
 }
 

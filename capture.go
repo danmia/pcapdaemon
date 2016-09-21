@@ -167,14 +167,23 @@ func captureToBuffer(req Capmsg, iface string)  {
         if(ferr != nil)  {
             fmt.Printf("Error writing file: %s", ferr)
             log.Printf("Error writing file: %s", ferr)
+        } else {
+            log.Printf("Written locally file: %s", config.Gen.Localdir + "/" + fileName)
+            fmt.Printf("Written locally file: %s", config.Gen.Localdir + "/" + fileName)
         }
+
     }
 
     if(config.Cs.Upload)  {
+        log.Printf("Uploading to Cloudshark file: %s", fileName)
+        fmt.Printf("Uploading to Cloudshark file: %s", fileName)
         postBufferCloudshark(config.Cs.Scheme, config.Cs.Host, config.Cs.Port, config.Cs.Token, f, fileName, tagstr)
     }
 
 	if(config.Aws.Upload)  {
+        log.Printf("Uploading to S3 file: %s", fileName)
+        log.Printf("Uploading to S3 file: %s", fileName)
+
 		var msgfolder string
 		var msgbucket string
 		var msgacl string
@@ -222,6 +231,9 @@ func captureToBuffer(req Capmsg, iface string)  {
 		msgconfig := awsconfig
 		msgconfig.Region = &msgregion	
         msgconfig.Endpoint = &msgep
+
+        log.Printf("Uploading to S3 file: %s", msgbucket + ":" + msgfolder + "/" + fileName)
+        fmt.Printf("Uploading to S3 file: %s", msgbucket + ":" + msgfolder + "/" + fileName)
 
 		postS3(*msgconfig, msgbucket, f, fileName, tagstr, msgfolder, msgacl, msgenc)
 	}
