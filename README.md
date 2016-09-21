@@ -90,7 +90,7 @@ auth		= "password"
 # consult /usr/include/sys/syslog.h for Priority which is a combination 
 # of facility and severity
 [syslog]
-priority    = 85
+priority    = 25
 tag         = "pcapdaemon"
 
 [[interface]]

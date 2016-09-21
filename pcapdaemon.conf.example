@@ -19,7 +19,7 @@ channel     = "capture"
 auth		= "password"
 
 [syslog]
-priority    = 85
+priority    = 25
 tag         = "pcapdaemon"
 
 [[interface]]

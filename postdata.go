@@ -109,14 +109,14 @@ func postS3(config aws.Config, bucket string, buf bytes.Buffer, filename string,
 	path := "/" + folder + "/" + filename
 
     params := &s3.PutObjectInput{
-		Bucket:        aws.String(bucket), // required
-		Key:           aws.String(path),       // required
+		Bucket:        aws.String(bucket),
+		Key:           aws.String(path),
         ACL:           aws.String(acl),
         Body:          fileBytes,
         ContentLength: aws.Int64(int64(len(buf.Bytes()))),
         ContentType:   aws.String(fileType),
         Metadata: map[string]*string{
-			"tags": aws.String(tags), //required
+			"tags": aws.String(tags),
         },
 	}
 
