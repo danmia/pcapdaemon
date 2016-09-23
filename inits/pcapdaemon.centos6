@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# pcapdaemon:               PCAP Capture Daemon
+#
+# chkconfig:    2345 97 06
+# description:  PCAP Daemon
+#
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+
+
+
+start()
+{
+
+        echo -n $"Starting pcapdaemon: "
+        daemon /usr/sbin/daemonize -p /var/run/pcapdaemon.pid -l /var/run/pcapdaemon.pid /usr/local/bin/pcapdaemon -config /etc/pcapdaemon.conf 
+
+        echo
+}
+
+stop()
+{
+        echo -n $"Shutting down pcapdaemon: "
+        killproc pcapdaemon
+
+        echo
+}
+
+# See how we were called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|reload)
+        stop
+        start
+        ;;
+  status)
+        status pcapdaemon
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|reload}"
+        exit 1
+esac
+
+exit 0
