@@ -25,7 +25,7 @@ var maxpackets *int
 var config tomlConfig
 var awsconfig *aws.Config
 var ifmap = map[string]pcap.Interface{}
-var almap = map[string]string{}
+var almap = make(map[string][]string)
 
 
 type logWriter struct {
@@ -176,7 +176,7 @@ func validateOptions(c tomlConfig)  {
             log.Println("Warning:  Interface [" + v.Name + "] has no aliases");
         } else {
             for _,av := range v.Alias  {
-                almap[av] = v.Name
+                almap[av] = append(almap[av], v.Name)
             }  
         } 
     }

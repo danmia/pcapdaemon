@@ -61,9 +61,11 @@ func subToRedis(server string, port int, subchannel string, auth string) {
                 } else if(len(msg.Alias) > 0)  {
                     for _,v := range msg.Alias  {
                         if _, ok := almap[v]; ok  {
-                            log.Println("Alias " + v + " exists in alias map")
-                            fmt.Println("Alias " + v + " exists in alias map")
-                            go captureToBuffer(msg, almap[v]);
+                            for _, dname := range almap[v]  {
+                                log.Println("Alias " + v + " exists in alias map for device " + dname)
+                                fmt.Println("Alias " + v + " exists in alias map for device " + dname)
+                                go captureToBuffer(msg, dname);
+                            }
                         } else {
                             log.Println("Alias " + v + " does not exist in alias map")
                             fmt.Println("Alias " + v + " does not exist in alias map")

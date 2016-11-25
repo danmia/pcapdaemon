@@ -88,9 +88,11 @@ func subToSqs() {
 					} else if(len(msg.Alias) > 0)  {
 						for _,v := range msg.Alias  {
 							if _, ok := almap[v]; ok  {
-								log.Println("SQS:  Alias " + v + " exists in alias map")
-								fmt.Println("SQS:  Alias " + v + " exists in alias map")
-								go captureToBuffer(msg, almap[v]);
+                                for _, dname := range almap[v]  {
+                                    log.Println("SQS:  Alias " + v + " exists in alias map for device " + dname)
+                                    fmt.Println("SQS:  Alias " + v + " exists in alias map for device " + dname)
+                                    go captureToBuffer(msg, dname);
+                                }
 							} else {
 								log.Println("SQS:  Alias " + v + " does not exist in alias map")
 								fmt.Println("SQS:  Alias " + v + " does not exist in alias map")
