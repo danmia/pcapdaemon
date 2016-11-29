@@ -22,12 +22,13 @@ func captureToBuffer(req Capmsg, iface string)  {
         promiscuous     bool   = true
         err             error
         rerr            error
-        timeout         time.Duration = 10 * time.Second
+        timeout         time.Duration = 3 * time.Second
         handle          *pcap.Handle
         packetCount     int = 0
         fileName        string
         tagstr          string
         matchNode       bool = false
+        captimeout      time.Duration = 60 * time.Second
     )
 
     // Do sanity checking on max number of packets
@@ -86,8 +87,16 @@ func captureToBuffer(req Capmsg, iface string)  {
     // END OF NODE MATCHING
 
     if(req.Timeout != 0)  {
-        timeout = req.Timeout * time.Second
+        if(req.Timeout > config.Gen.Maxtimeout)  {
+            log.Printf("Error:  Max timeout %d is greater than max allowable timeout %d\n", req.Timeout, config.Gen.Maxtimeout)
+            fmt.Printf("Error:  Max timeout %d is greater than max allowable timeout %d\n", req.Timeout, config.Gen.Maxtimeout)
+            return
+        }
+        captimeout = req.Timeout * time.Second
+    } else {
+        captimeout = config.Gen.Deftimeout * time.Second
     }
+    
 
     // If snaplength is not overridden in the message then use the system default
     if(req.Snap == 0)  {
@@ -127,21 +136,41 @@ func captureToBuffer(req Capmsg, iface string)  {
     packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
     packetSource.DecodeOptions = gopacket.DecodeOptions{Lazy: false, NoCopy: false, SkipDecodeRecovery: true}
 
-    for packet := range packetSource.Packets() {
-        // Process packet here
-        // fmt.Println(packet)
-        w.WritePacket(packet.Metadata().CaptureInfo, packet.Data())
-        packetCount++
-        
-        // Only capture a fixed amount of packets
-        if packetCount >= req.Packets {
-            break
+    packetchan := packetSource.Packets()
+
+    C:
+    for  {
+        select  {
+            case packet := <-packetchan:
+                // Process packet here
+                fmt.Println(packet)
+                w.WritePacket(packet.Metadata().CaptureInfo, packet.Data())
+                packetCount++
+            
+                // Only capture a fixed amount of packets
+                if packetCount >= req.Packets {
+                    fmt.Printf("Packet count %d hit for capture %s\n", req.Packets, fileName)
+                    log.Printf("Packet count %d hit for capture %s\n", req.Packets, fileName)
+                    break C
+                }
+
+            case <-time.After(captimeout):
+                fmt.Printf("Packet timeout %s hit for capture %s, captured %d packets\n", captimeout.String(), fileName, packetCount)
+                log.Printf("Packet timeout %s hit for capture %s, captured %d packets\n", captimeout.String(), fileName, packetCount)
+
+                // If there are no packets before the timeout then return without uploading
+                if(packetCount == 0)  {
+                    log.Printf("Packet timeout %s hit for capture %s and packet count is 0 so returning without uploading\n", captimeout.String(), fileName)
+                    fmt.Printf("Packet timeout %s hit for capture %s and packet count is 0 so returning without uploading\n", captimeout.String(), fileName)
+                    return
+                } 
+
+                break C
         }
     }
 
-
     // Handle Tags 
-    // First time I'm touching tagstr which is why I don't check for empty
+    // First tim I'm touching tagstr which is why I don't check for empty
     if(req.Customer != "")  {
         tagstr = "customer:" + req.Customer
     }

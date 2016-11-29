@@ -65,13 +65,18 @@ This is a daemon that will subscribe to a redis pub/sub channel or amazon SQS qu
  * SQS support is implemented using long poll
  * SQS chunksize is the number of messages to process at once.  This could end up being the number of simultaneous captures so use with care
  * Given the time sensitive nature of capture messages, I recommend setting Default visibility timeout to 10 seconds and setting the message retention period to no more than 1 minute (these are in queue configuration in AWS SQS gui)
+ * defaulttimeout is the default timeout to wait for packets during a capture.  IE.  If this amount of time passes between receiving packets, the capture will exit and upload unless number of packets is zero.
+ * maxtimeout is the upper bound of the timeout explained above.  Since this can be overridden per message, an upper allowable bound seemed like a reasonable control to put in place.
 ``` 
 ## Config file
 [general]
-maxpackets  = 50000
-writelocal  = false
-localdir    = "/tmp"
-snaplength  = 500
+maxpackets      = 50000
+writelocal      = false
+localdir        = "/tmp"
+snaplength      = 500
+defaulttimeout  = 10
+maxtimeout      = 3600
+
 
 [cloudshark]
 host        = "www.cloudshark.org"

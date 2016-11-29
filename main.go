@@ -5,6 +5,7 @@ import (
     "os"
     "fmt"
     "log" 
+    "time"
     "log/syslog" 
     "github.com/google/gopacket/pcap"
     "github.com/BurntSushi/toml"
@@ -166,6 +167,14 @@ func validateOptions(c tomlConfig)  {
             log.Fatal(c.Gen.Localdir + " does not exist");
         }
     } 
+
+    if(c.Gen.Deftimeout == 0)  {
+        c.Gen.Deftimeout = 60
+    }
+
+    if(c.Gen.Maxtimeout == 0)  {
+        c.Gen.Maxtimeout = 3600 * time.Second
+    }
 
     for _,v := range c.Ifmap  {
         if(v.Name == "")  {

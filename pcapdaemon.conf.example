@@ -3,6 +3,8 @@ maxpackets  = 50000
 writelocal  = false
 localdir    = "/tmp"
 snaplength  = 500
+defaulttimeout  = 10
+maxtimeout      = 3600
 
 [cloudshark]
 host        = "www.cloudshark.org"

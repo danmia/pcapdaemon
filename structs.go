@@ -38,10 +38,12 @@ type tomlConfig struct {
 }
 
 type General struct  {
-    Maxpackets      int         `toml:"maxpackets"`
-    Writelocal      bool        `toml:"writelocal"`
-    Localdir        string      `toml:"localdir"`
-    Snap            int         `toml:"snaplength"`
+    Maxpackets      int             `toml:"maxpackets"`
+    Maxtimeout      time.Duration   `toml:"maxtimeout"`
+    Deftimeout      time.Duration   `toml:"defaulttimeout"`
+    Writelocal      bool            `toml:"writelocal"`
+    Localdir        string          `toml:"localdir"`
+    Snap            int             `toml:"snaplength"`
 }
 
 type Cloudshark struct {
