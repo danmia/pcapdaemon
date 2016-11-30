@@ -29,7 +29,7 @@ This is a daemon that will subscribe to a redis pub/sub channel or amazon SQS qu
         "snap": 1500,
         "packets": 50,
         "alertid": 655443,
-        "timeout": 15
+        "timeout": 15,
 		"folder": "myfolder",
 		"bucket": "mybucket",
 		"acl": "public-read",
