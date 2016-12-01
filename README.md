@@ -35,6 +35,7 @@ There are 4 controls that determine when/why the capture will exit and upload.  
         "timeout": 15,
         "duration": 60,
         "bytes": 1000,
+        "packetdebug":false,
 		"folder": "myfolder",
 		"bucket": "mybucket",
 		"acl": "public-read",
@@ -56,6 +57,7 @@ There are 4 controls that determine when/why the capture will exit and upload.  
  * timeout - Number of seconds to let capture last should the number of packets not get hit.  Integer.
  * duration - Max amount of time to capture for
  * bytes - Max bytes to capture.  Note this will not be exact as that would require slicing a packet in half.
+ * packetdebug - Print / log captured packet metadata.  True or false.  Defaults to false.
  * folder - S3 folder inside your bucket // S3 ONLY
  * bucket - S3 bucket // S3 ONLY
  * folder - S3 ACL // S3 ONLY
@@ -76,6 +78,7 @@ There are 4 controls that determine when/why the capture will exit and upload.  
  * maxtimeout is the upper bound of the timeout explained above.  Since this can be overridden per message, an upper allowable bound seemed like a reasonable control to put in place.
  * maxduration is the maximum allowable duration you can have in a capture message.  This is to prevent someone doing somethhing awful.
  * maxbytes is the maximum bytes that can bet set in the capture message.  Again, an attempt to let the sysadmin protect the system from "bad" messages.
+ * packetdebug is a boolean that enables logging and printing to STDOUT packet metadata that was captured.  Defaults to false. Use with care.
 ``` 
 ## Config file
 [general]
@@ -87,7 +90,7 @@ defaulttimeout  = 10
 maxtimeout      = 3600
 maxduration     = 3600
 maxbytes        = 100000000
-
+packetdebug     = false
 
 [cloudshark]
 host        = "www.cloudshark.org"

@@ -19,6 +19,7 @@ type Capmsg struct  {
     Timeout         time.Duration   `json:"timeout,omitempty"`
     Duration        time.Duration   `json:"duration,omitempty"`
     Bytes           int             `json:"bytes,omitempty"`
+	PacketDebug		bool			`json:"packetdebug,omitempty"`
     Folder			string          `json:"folder,omitempty"`
     Bucket			string          `json:"bucket,omitempty"`
 	Acl				string			`json:"acl,omitempty"`	
@@ -48,6 +49,7 @@ type General struct  {
     Writelocal      bool            `toml:"writelocal"`
     Localdir        string          `toml:"localdir"`
     Snap            int             `toml:"snaplength"`
+	PacketDebug		bool			`toml:"packetdebug"`
 }
 
 type Cloudshark struct {

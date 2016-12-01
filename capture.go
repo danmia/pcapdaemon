@@ -173,7 +173,13 @@ func captureToBuffer(req Capmsg, iface string)  {
         select  {
             case packet := <-packetchan:
                 // Process packet here
-                fmt.Println(packet)
+
+                // Global packet debug
+                if(config.Gen.PacketDebug || req.PacketDebug)  {
+                    fmt.Println(packet)
+                    log.Println(packet)
+                }
+
                 w.WritePacket(packet.Metadata().CaptureInfo, packet.Data())
                 packetCount++
             

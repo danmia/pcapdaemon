@@ -7,6 +7,7 @@ defaulttimeout  = 10
 maxtimeout      = 3600
 maxduration     = 3600
 maxbytes        = 100000000
+packetdebug     = false
 
 [cloudshark]
 host        = "www.cloudshark.org"
