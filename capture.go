@@ -28,7 +28,9 @@ func captureToBuffer(req Capmsg, iface string)  {
         fileName        string
         tagstr          string
         matchNode       bool = false
-        captimeout      time.Duration = 60 * time.Second
+        captimeout      time.Duration
+        capduration     time.Duration
+        capbytes        int
     )
 
     // Do sanity checking on max number of packets
@@ -86,6 +88,9 @@ func captureToBuffer(req Capmsg, iface string)  {
     }
     // END OF NODE MATCHING
 
+
+    // Timeout management is to break out of a capture if long periods of time pass
+    // without capturing any packets
     if(req.Timeout != 0)  {
         if(req.Timeout > config.Gen.Maxtimeout)  {
             log.Printf("Error:  Max timeout %d is greater than max allowable timeout %d\n", req.Timeout, config.Gen.Maxtimeout)
@@ -95,6 +100,30 @@ func captureToBuffer(req Capmsg, iface string)  {
         captimeout = req.Timeout * time.Second
     } else {
         captimeout = config.Gen.Deftimeout * time.Second
+    }
+
+    // Duration managment is to put a cap on how long to capture for no matter what is going on
+    if(req.Duration != 0)  {
+        if(req.Duration > config.Gen.Maxduration)  {
+            log.Printf("Error:  Max duration %d is greater than max allowable duration %d\n", req.Duration, config.Gen.Maxduration)
+            fmt.Printf("Error:  Max duration %d is greater than max allowable duration %d\n", req.Duration, config.Gen.Maxduration)
+            return
+        }
+        capduration = req.Duration * time.Second
+    } else {
+        capduration = config.Gen.Maxduration * time.Second
+    }
+    
+    // Byte management is to break out after a certain number of bytes
+    if(req.Bytes != 0)  {
+        if(req.Bytes > config.Gen.Maxbytes)  {
+            log.Printf("Error:  message bytes %d is greater than max allowable bytes %d\n", req.Bytes, config.Gen.Maxbytes)
+            fmt.Printf("Error:  message bytes %d is greater than max allowable bytes %d\n", req.Bytes, config.Gen.Maxbytes)
+            return
+        }
+        capbytes = req.Bytes
+    } else {
+        capbytes = config.Gen.Maxbytes
     }
     
 
@@ -137,6 +166,7 @@ func captureToBuffer(req Capmsg, iface string)  {
     packetSource.DecodeOptions = gopacket.DecodeOptions{Lazy: false, NoCopy: false, SkipDecodeRecovery: true}
 
     packetchan := packetSource.Packets()
+    captimer := time.NewTimer(capduration)
 
     C:
     for  {
@@ -149,14 +179,21 @@ func captureToBuffer(req Capmsg, iface string)  {
             
                 // Only capture a fixed amount of packets
                 if packetCount >= req.Packets {
-                    fmt.Printf("Packet count %d hit for capture %s\n", req.Packets, fileName)
-                    log.Printf("Packet count %d hit for capture %s\n", req.Packets, fileName)
+                    fmt.Printf("Packet count %d hit for capture %s, size: %d bytes\n", req.Packets, fileName, f.Len())
+                    log.Printf("Packet count %d hit for capture %s, size: %d bytes\n", req.Packets, fileName, f.Len())
+                    break C
+                }
+
+                // Only capture a fixed amount of packets
+                if capbytes <= f.Len() {
+                    fmt.Printf("Size limit %d bytes hit for capture %s, size: %d bytes\n", capbytes, fileName, f.Len())
+                    log.Printf("Size limit %d bytes hit for capture %s, size: %d bytes\n", capbytes, fileName, f.Len())
                     break C
                 }
 
             case <-time.After(captimeout):
-                fmt.Printf("Packet timeout %s hit for capture %s, captured %d packets\n", captimeout.String(), fileName, packetCount)
-                log.Printf("Packet timeout %s hit for capture %s, captured %d packets\n", captimeout.String(), fileName, packetCount)
+                fmt.Printf("Packet timeout %s hit for capture %s, captured %d packets, size: %d\n", captimeout.String(), fileName, packetCount, f.Len())
+                log.Printf("Packet timeout %s hit for capture %s, captured %d packets, size: %d\n", captimeout.String(), fileName, packetCount, f.Len())
 
                 // If there are no packets before the timeout then return without uploading
                 if(packetCount == 0)  {
@@ -164,8 +201,20 @@ func captureToBuffer(req Capmsg, iface string)  {
                     fmt.Printf("Packet timeout %s hit for capture %s and packet count is 0 so returning without uploading\n", captimeout.String(), fileName)
                     return
                 } 
-
                 break C
+
+            case <- captimer.C:
+                fmt.Printf("Capture duration %s hit for capture %s, captured %d packets, size: %d\n", capduration.String(), fileName, packetCount, f.Len())
+                log.Printf("Capture duration %s hit for capture %s, captured %d packets, size: %d\n", capduration.String(), fileName, packetCount, f.Len())
+                
+                // If there are no packets before the total duration hits then return without uploading
+                if(packetCount == 0)  {
+                    log.Printf("Capture duration %s hit for capture %s and packet count is 0 so returning without uploading\n", capduration.String(), fileName)
+                    fmt.Printf("Capture duration %s hit for capture %s and packet count is 0 so returning without uploading\n", capduration.String(), fileName)
+                    return
+                }
+                break C
+    
         }
     }
 

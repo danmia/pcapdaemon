@@ -30,6 +30,8 @@ This is a daemon that will subscribe to a redis pub/sub channel or amazon SQS qu
         "packets": 50,
         "alertid": 655443,
         "timeout": 15,
+        "duration": 60,
+        "bytes": 1000,
 		"folder": "myfolder",
 		"bucket": "mybucket",
 		"acl": "public-read",
@@ -49,6 +51,8 @@ This is a daemon that will subscribe to a redis pub/sub channel or amazon SQS qu
  * packets - Number of packets to capture.  Integer.
  * alertid - An integer ID for the event or alert or whatever you're tracking (not required)
  * timeout - Number of seconds to let capture last should the number of packets not get hit.  Integer.
+ * duration - Max amount of time to capture for
+ * bytes - Max bytes to capture.  Note this will not be exact as that would require slicing a packet in half.
  * folder - S3 folder inside your bucket // S3 ONLY
  * bucket - S3 bucket // S3 ONLY
  * folder - S3 ACL // S3 ONLY
@@ -67,6 +71,8 @@ This is a daemon that will subscribe to a redis pub/sub channel or amazon SQS qu
  * Given the time sensitive nature of capture messages, I recommend setting Default visibility timeout to 10 seconds and setting the message retention period to no more than 1 minute (these are in queue configuration in AWS SQS gui)
  * defaulttimeout is the default timeout to wait for packets during a capture.  IE.  If this amount of time passes between receiving packets, the capture will exit and upload unless number of packets is zero.
  * maxtimeout is the upper bound of the timeout explained above.  Since this can be overridden per message, an upper allowable bound seemed like a reasonable control to put in place.
+ * maxduration is the maximum allowable duration you can have in a capture message.  This is to prevent someone doing somethhing awful.
+ * maxbytes is the maximum bytes that can bet set in the capture message.  Again, an attempt to let the sysadmin protect the system from "bad" messages.
 ``` 
 ## Config file
 [general]
@@ -76,6 +82,8 @@ localdir        = "/tmp"
 snaplength      = 500
 defaulttimeout  = 10
 maxtimeout      = 3600
+maxduration     = 3600
+maxbytes        = 100000000
 
 
 [cloudshark]

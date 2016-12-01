@@ -17,6 +17,8 @@ type Capmsg struct  {
     Alertid         int             `json:"alertid,omitempty"`
     Alertstr        int             `json:"alertstr,omitempty"`
     Timeout         time.Duration   `json:"timeout,omitempty"`
+    Duration        time.Duration   `json:"duration,omitempty"`
+    Bytes           int             `json:"bytes,omitempty"`
     Folder			string          `json:"folder,omitempty"`
     Bucket			string          `json:"bucket,omitempty"`
 	Acl				string			`json:"acl,omitempty"`	
@@ -39,7 +41,9 @@ type tomlConfig struct {
 
 type General struct  {
     Maxpackets      int             `toml:"maxpackets"`
+    Maxbytes        int             `toml:"maxbytes"`
     Maxtimeout      time.Duration   `toml:"maxtimeout"`
+    Maxduration     time.Duration   `toml:"maxduration"`
     Deftimeout      time.Duration   `toml:"defaulttimeout"`
     Writelocal      bool            `toml:"writelocal"`
     Localdir        string          `toml:"localdir"`

@@ -176,6 +176,15 @@ func validateOptions(c tomlConfig)  {
         c.Gen.Maxtimeout = 3600 * time.Second
     }
 
+    if(c.Gen.Maxduration == 0)  {
+        c.Gen.Maxduration = 3600 * time.Second
+    }
+
+    if(c.Gen.Maxbytes == 0)  {
+        // set to 100 megabytes if max not set
+        c.Gen.Maxbytes = 100000000
+    }
+
     for _,v := range c.Ifmap  {
         if(v.Name == "")  {
             log.Fatal("Interface definition missing name property")
