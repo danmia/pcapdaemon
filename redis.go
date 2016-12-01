@@ -43,10 +43,22 @@ func subToRedis(server string, port int, subchannel string, auth string) {
         var msg Capmsg
         switch v := psc.Receive().(type) {
         case redis.Message:
-            fmt.Printf("Redis: %s: message: %s\n", v.Channel, v.Data)
+
+            if(config.Gen.LogRequests)  {
+                fmt.Printf("Redis Request: %s: message: %s\n", v.Channel, v.Data)
+                log.Printf("Redis Request: %s: message: %s\n", v.Channel, v.Data)
+            }
+
             if err := json.Unmarshal(v.Data, &msg); err != nil {
                 fmt.Println("Redis: ", err)
+                log.Println("Redis: ", err)
             } else {
+
+                if(msg.LogRequest && ! config.Gen.LogRequests)  {
+                    fmt.Printf("Redis Request: %s: message: %s\n", v.Channel, v.Data)
+                    log.Printf("Redis Request: %s: message: %s\n", v.Channel, v.Data)
+                }
+ 
                 if(len(msg.Interface) > 0)  {
                     for _, v := range msg.Interface  {
                         if _, ok := ifmap[v]; ok  {
@@ -75,8 +87,10 @@ func subToRedis(server string, port int, subchannel string, auth string) {
             }
         case redis.Subscription:
             fmt.Printf("Redis:  %s: %s %d\n", v.Channel, v.Kind, v.Count)
+            log.Printf("Redis:  %s: %s %d\n", v.Channel, v.Kind, v.Count)
         case error:
             fmt.Printf("Redis Error: %s\n", v)
+            log.Printf("Redis Error: %s\n", v)
 			if(strings.Contains(v.Error(), "network"))  {
 				fmt.Println("Redis:  We have a network issue")
 				for {

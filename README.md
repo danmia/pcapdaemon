@@ -36,6 +36,7 @@ There are 4 controls that determine when/why the capture will exit and upload.  
         "duration": 60,
         "bytes": 1000,
         "packetdebug":false,
+        "logrequest":false,
 		"folder": "myfolder",
 		"bucket": "mybucket",
 		"acl": "public-read",
@@ -58,6 +59,7 @@ There are 4 controls that determine when/why the capture will exit and upload.  
  * duration - Max amount of time to capture for
  * bytes - Max bytes to capture.  Note this will not be exact as that would require slicing a packet in half.
  * packetdebug - Print / log captured packet metadata.  True or false.  Defaults to false.
+ * logrequest - Print / log the json request that was received.  Boolean: defaults to false
  * folder - S3 folder inside your bucket // S3 ONLY
  * bucket - S3 bucket // S3 ONLY
  * folder - S3 ACL // S3 ONLY
@@ -79,6 +81,7 @@ There are 4 controls that determine when/why the capture will exit and upload.  
  * maxduration is the maximum allowable duration you can have in a capture message.  This is to prevent someone doing somethhing awful.
  * maxbytes is the maximum bytes that can bet set in the capture message.  Again, an attempt to let the sysadmin protect the system from "bad" messages.
  * packetdebug is a boolean that enables logging and printing to STDOUT packet metadata that was captured.  Defaults to false. Use with care.
+ * logrequests is a boolean that enables logging of the originating json requests globally.  Defaults to false.
 ``` 
 ## Config file
 [general]
@@ -91,6 +94,7 @@ maxtimeout      = 3600
 maxduration     = 3600
 maxbytes        = 100000000
 packetdebug     = false
+logrequests     = false
 
 [cloudshark]
 host        = "www.cloudshark.org"
