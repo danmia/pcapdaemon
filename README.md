@@ -3,6 +3,9 @@
 ## Description
 This is a daemon that will subscribe to a redis pub/sub channel or amazon SQS queue for requests to capture.  It will capture and then optionally upload to Cloudshark, Amazon S3 or save to the local filesystem.  It could really be adapted to upload anywhere but the key was that I wanted to be able to trigger captures based on any number of events (traps, log events etc) via a lightweight mechanism.  A design goal was to have it capture into a buffer in memory and post the buffer without adding any kind of filesystem/io dependency.  
 
+## Capture Controls
+There are 4 controls that determine when/why the capture will exit and upload.  duration, timeout, packets and bytes.  The first of those parameters to hit wins out and the capture will complete and upload.  It's worth noting that the capture size will not be exact as that would require slicing packets into parts.  Every packet it looks at the number of bytes and if the previous packet pushed us over the limit (with pcap format overhead of course), then we complete and upload.
+
 ## Options
     -cshost string          cloudshark host (default "localhost")
     -csscheme string        cloudshark scheme http|https (default "https")
