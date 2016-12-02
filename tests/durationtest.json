@@ -1,1 +1,1 @@
-PUBLISH capture '{"bpf":"host 8.8.8.8","timeout":300,"duration":10,"customer":"defensenet","node":"any","packets":100,"interface":["eth0","enp0s25"],"snap":1500,"tags":"networkipcount,iptype:prefix"}'
+PUBLISH capture '{"bpf":"host 8.8.8.8","timeout":300,"duration":10,"customer":"blah","node":"any","packets":100,"interface":["eth0","enp0s25"],"snap":1500,"tags":"networkipcount,iptype:prefix"}'
