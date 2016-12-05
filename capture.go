@@ -268,7 +268,7 @@ func captureToBuffer(req Capmsg, iface string)  {
 
 	if(config.Aws.Upload)  {
         log.Printf("Uploading to S3 file: %s", fileName)
-        log.Printf("Uploading to S3 file: %s", fileName)
+        fmt.Printf("Uploading to S3 file: %s", fileName)
 
 		var msgfolder string
 		var msgbucket string
