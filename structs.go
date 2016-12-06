@@ -103,3 +103,13 @@ type Sqs struct {
 	Chunksize	*int64		`toml:"chunksize"`
 	Listen		bool		`toml:"listen"`
 }
+
+type CsSuccess struct  {
+    Filename    string      `json:"filename,omitempty"`
+    Id          string      `json:"id,omitempty"`
+}
+
+type CsFail struct  {
+    Status      int         `json:"status,omitempty"`
+    Exceptions  []string    `json:"exceptions,omitempty"`
+}

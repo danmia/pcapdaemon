@@ -261,14 +261,14 @@ func captureToBuffer(req Capmsg, iface string)  {
     }
 
     if(config.Cs.Upload)  {
-        log.Printf("Uploading to Cloudshark file: %s", fileName)
-        fmt.Printf("Uploading to Cloudshark file: %s", fileName)
+        log.Printf("Uploading to Cloudshark file: %s\n", fileName)
+        fmt.Printf("Uploading to Cloudshark file: %s\n", fileName)
         postBufferCloudshark(config.Cs.Scheme, config.Cs.Host, config.Cs.Port, config.Cs.Token, f, fileName, tagstr)
     }
 
 	if(config.Aws.Upload)  {
-        log.Printf("Uploading to S3 file: %s", fileName)
-        fmt.Printf("Uploading to S3 file: %s", fileName)
+        log.Printf("Uploading to S3 file: %s\n", fileName)
+        fmt.Printf("Uploading to S3 file: %s\n", fileName)
 
 		var msgfolder string
 		var msgbucket string

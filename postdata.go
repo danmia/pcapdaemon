@@ -7,6 +7,7 @@ import (
   "log"
   "strconv"
   "strings"
+  "encoding/json"
   "mime/multipart"
   "net/textproto"
   "net/http"
@@ -69,7 +70,8 @@ func postBufferCloudshark(scheme string, host string, port int, token string, bu
 
     request, err := newBufferUploadRequest(url, extraParams, "file", buf, filename)
     if err != nil {
-        log.Println(err)
+        log.Printf("newBufferUpload returned: %s\n", err)
+        fmt.Printf("newBufferUpload returned: %s\n", err)
 		return
     }
 
@@ -79,20 +81,46 @@ func postBufferCloudshark(scheme string, host string, port int, token string, bu
     client := &http.Client{Transport: tr}
     resp, err := client.Do(request)
     if err != nil {
-        log.Println(err)
+        log.Printf("Error making request: %s\n", err)
+        fmt.Printf("Error making request: %s\n", err)
 		return
     } else {
         body := &bytes.Buffer{}
         _, err := body.ReadFrom(resp.Body)
         if err != nil {
-            log.Println(err)
+            log.Printf("Error:  can't read from body: %s\n", err)
+            fmt.Printf("Error:  can't read from body: %s\n", err)
         }
         resp.Body.Close()
-        fmt.Println(resp.StatusCode)
-        fmt.Println(resp.Header)
-        fmt.Println(body)
-        log.Println("Successfully uploaded ", filename, " to Cloudshark")
-        fmt.Println("Successfully uploaded ", filename, " to Cloudshark")
+
+        if(resp.StatusCode == 200)  {
+            var succ CsSuccess
+            err := json.Unmarshal(body.Bytes(), &succ)
+            if err != nil {
+                fmt.Printf("Unable to parse json error: %s\n", err)
+                log.Printf("Unable to parse json error: %s\n", err)
+            }
+            log.Printf("Successfully uploaded filename: %s with id: %s\n", succ.Filename, succ.Id)
+            fmt.Printf("Successfully uploaded filename: %s with id: %s\n", succ.Filename, succ.Id)
+        } else  {
+            var fail CsFail
+            err := json.Unmarshal(body.Bytes(), &fail)
+            if err != nil {
+                fmt.Printf("Unable to parse json error: %s\n", err)
+                log.Printf("Unable to parse json error: %s\n", err)
+            } 
+            fmt.Printf("Error code: %d\n", resp.StatusCode)
+            log.Printf("Error code: %d\n", resp.StatusCode)
+            fmt.Printf("Headers: %s\n", resp.Header)
+            log.Printf("Headers: %s\n", resp.Header)
+            fmt.Printf("Params: %s\n", extraParams)
+            log.Printf("Params: %s\n", extraParams)
+
+            for _, ex := range fail.Exceptions  {
+                log.Printf("Exception:  %s\n", ex)                 
+                fmt.Printf("Exception:  %s\n", ex)                 
+            } 
+        }
     }
 }
 
