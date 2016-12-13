@@ -242,6 +242,12 @@ func captureToBuffer(req Capmsg, iface string)  {
         tagstr = tagstr + "," + req.Tags 
     }
 
+    if(req.AliasMatched != "" &&  tagstr == "")  {
+        tagstr = "alias:" + req.AliasMatched
+    } else if(req.AliasMatched != "" &&  tagstr != "") {
+        tagstr = tagstr + ",alias:" + req.AliasMatched
+    }
+
     if(tagstr == "")  {
         tagstr = "node:" + hostname + ",interface:" + iface + ",snaplength:" + strconv.Itoa(req.Snap)
     } else {

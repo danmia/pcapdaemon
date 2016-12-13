@@ -54,6 +54,9 @@ func subToRedis(server string, port int, subchannel string, auth string) {
                 log.Println("Redis: ", err)
             } else {
 
+                // set AliasMatched to empty to ensure nobody passes it in hence breaking things
+                msg.AliasMatched = ""
+
                 if(msg.LogRequest && ! config.Gen.LogRequests)  {
                     fmt.Printf("Redis Request: %s: message: %s\n", v.Channel, v.Data)
                     log.Printf("Redis Request: %s: message: %s\n", v.Channel, v.Data)
@@ -76,6 +79,7 @@ func subToRedis(server string, port int, subchannel string, auth string) {
                             for _, dname := range almap[v]  {
                                 log.Println("Alias " + v + " exists in alias map for device " + dname)
                                 fmt.Println("Alias " + v + " exists in alias map for device " + dname)
+                                msg.AliasMatched = v
                                 go captureToBuffer(msg, dname);
                             }
                         } else {
