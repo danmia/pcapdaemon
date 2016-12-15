@@ -19,6 +19,7 @@ There are 4 controls that determine when/why the capture will exit and upload.  
     -destdir                Directory to store locally written pcap files in
     -maxpackets             Maximum number of packets per capture.  Default 50000.
     -config string          Path to configuration file.  No default.
+    -panic                  Enable panics on failed gopacket layer parsing.  Defaults to false
     
 ## Message format
     {
