@@ -20,6 +20,7 @@ var cstokenPtr *string
 var csschemePtr *string
 var upPtr *bool
 var wLocal *bool
+var panicPtr *bool
 var destdir *string
 var hostname string
 var maxpackets *int
@@ -224,6 +225,7 @@ func main() {
     maxpackets = flag.Int("maxpackets", 0, "Maximum number of packets per capture.  Default 50000")
 
     upPtr = flag.Bool("upload", false, "Upload pcap")
+    panicPtr = flag.Bool("panic", false, "Enable panics on layer parsing")
 
     // flags for writing locally
     wLocal = flag.Bool("writelocal", false, "Write files locally.  Must set destdir")

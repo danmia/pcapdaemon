@@ -163,7 +163,7 @@ func captureToBuffer(req Capmsg, iface string)  {
 
     // Start processing packets
     packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
-    packetSource.DecodeOptions = gopacket.DecodeOptions{Lazy: false, NoCopy: false, SkipDecodeRecovery: true}
+    packetSource.DecodeOptions = gopacket.DecodeOptions{Lazy: false, NoCopy: false, SkipDecodeRecovery: *panicPtr}
 
     packetchan := packetSource.Packets()
     captimer := time.NewTimer(capduration)
