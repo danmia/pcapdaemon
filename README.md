@@ -28,7 +28,7 @@ There are 4 controls that determine when/why the capture will exit and upload.  
         "interface": ["bond1","bond2"],
         "alias": ["local","public"],
         "tags": "blah,tagme,stuff",
-        "bpf": "dst ip 10.0.0.1",
+        "bpf": "dst host 10.0.0.1",
         "customer": "importantcustomer",
         "snap": 1500,
         "packets": 50,
