@@ -116,6 +116,7 @@ func postBufferCloudshark(scheme string, host string, port int, token string, bu
             fmt.Printf("Params: %s\n", extraParams)
             log.Printf("Params: %s\n", extraParams)
 
+            log.Printf("\nFull Body:\n%s\n", body.Bytes())
             for _, ex := range fail.Exceptions  {
                 log.Printf("Exception:  %s\n", ex)                 
                 fmt.Printf("Exception:  %s\n", ex)                 

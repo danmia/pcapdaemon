@@ -190,6 +190,9 @@ func validateOptions(c tomlConfig)  {
         if(v.Name == "")  {
             log.Fatal("Interface definition missing name property")
         }
+        if _, ok := ifmap[v.Name]; !ok  {
+            log.Fatal("Interface " + v.Name + " does not exist on host")
+        }
         if(len(v.Alias) == 0)  {
             fmt.Println("Warning:  Interface [" + v.Name + "] has no aliases");
             log.Println("Warning:  Interface [" + v.Name + "] has no aliases");
@@ -233,6 +236,12 @@ func main() {
 
     // parse the flags
     flag.Parse()
+
+    log.SetFlags(0)
+    logwriter, e := syslog.New(syslog.Priority(config.Log.Priority), config.Log.Tag)
+    if e == nil {
+        log.SetOutput(logwriter)
+    }
 
     if(*configfile != "")  {
         if _, err := os.Stat(*configfile); os.IsNotExist(err) {
@@ -287,12 +296,6 @@ func main() {
 
     // Run the validator AFTER defaults and config have been processed
     validateOptions(config)
-
-    log.SetFlags(0)
-    logwriter, e := syslog.New(syslog.Priority(config.Log.Priority), config.Log.Tag)
-    if e == nil {
-        log.SetOutput(logwriter)
-    }
 
     hostname, _ = os.Hostname()
     // Channel for thread sync
