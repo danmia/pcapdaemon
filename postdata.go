@@ -57,7 +57,7 @@ func newBufferUploadRequest(uri string, params map[string]string, paramName stri
     return myReq, myErr
 }
 
-func postBufferCloudshark(scheme string, host string, port int, token string, buf bytes.Buffer, filename string, tags string)  {
+func postBufferCloudshark(scheme string, host string, port int, token string, timeout int, buf bytes.Buffer, filename string, tags string)  {
 
     var url string
     extraParams := map[string]string{
@@ -81,7 +81,7 @@ func postBufferCloudshark(scheme string, host string, port int, token string, bu
     }
     client := &http.Client{
         Transport: tr,
-        Timeout: 15 * time.Second,
+        Timeout: time.Duration(timeout) * time.Second,
     }
     resp, err := client.Do(request)
     if err != nil {

@@ -35,8 +35,8 @@ func captureToBuffer(req Capmsg, iface string)  {
 
     // Do sanity checking on max number of packets
     if(req.Packets == 0)  {
-        fmt.Println("Invalid Capture size.  packets must be set to between 1 and " + strconv.Itoa(*maxpackets))
-        log.Println("Invalid Capture size.  packets must be set to between 1 and " + strconv.Itoa(*maxpackets))
+        fmt.Println("Invalid Capture size.  packets must be set to between 1 and " + strconv.Itoa(config.Gen.Maxpackets))
+        log.Println("Invalid Capture size.  packets must be set to between 1 and " + strconv.Itoa(config.Gen.Maxpackets))
         return
     }
     if(req.Packets > config.Gen.Maxpackets)  {
@@ -93,8 +93,8 @@ func captureToBuffer(req Capmsg, iface string)  {
     // without capturing any packets
     if(req.Timeout != 0)  {
         if(req.Timeout > config.Gen.Maxtimeout)  {
-            log.Printf("Error:  Max timeout %d is greater than max allowable timeout %d\n", req.Timeout, config.Gen.Maxtimeout)
-            fmt.Printf("Error:  Max timeout %d is greater than max allowable timeout %d\n", req.Timeout, config.Gen.Maxtimeout)
+            log.Printf("Error:  message timeout %d is greater than max allowable timeout %d\n", req.Timeout, config.Gen.Maxtimeout)
+            fmt.Printf("Error:  message timeout %d is greater than max allowable timeout %d\n", req.Timeout, config.Gen.Maxtimeout)
             return
         }
         captimeout = req.Timeout * time.Second
@@ -105,8 +105,8 @@ func captureToBuffer(req Capmsg, iface string)  {
     // Duration managment is to put a cap on how long to capture for no matter what is going on
     if(req.Duration != 0)  {
         if(req.Duration > config.Gen.Maxduration)  {
-            log.Printf("Error:  Max duration %d is greater than max allowable duration %d\n", req.Duration, config.Gen.Maxduration)
-            fmt.Printf("Error:  Max duration %d is greater than max allowable duration %d\n", req.Duration, config.Gen.Maxduration)
+            log.Printf("Error:  message duration %d is greater than max allowable duration %d\n", req.Duration, config.Gen.Maxduration)
+            fmt.Printf("Error:  message duration %d is greater than max allowable duration %d\n", req.Duration, config.Gen.Maxduration)
             return
         }
         capduration = req.Duration * time.Second
@@ -269,7 +269,7 @@ func captureToBuffer(req Capmsg, iface string)  {
     if(config.Cs.Upload)  {
         log.Printf("Uploading to Cloudshark file: %s\n", fileName)
         fmt.Printf("Uploading to Cloudshark file: %s\n", fileName)
-        postBufferCloudshark(config.Cs.Scheme, config.Cs.Host, config.Cs.Port, config.Cs.Token, f, fileName, tagstr)
+        postBufferCloudshark(config.Cs.Scheme, config.Cs.Host, config.Cs.Port, config.Cs.Token, config.Cs.Timeout, f, fileName, tagstr)
     }
 
 	if(config.Aws.Upload)  {
