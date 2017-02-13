@@ -61,8 +61,14 @@ func subToRedis(server string, port int, subchannel string, auth string) {
                     fmt.Printf("Redis Request: %s: message: %s\n", v.Channel, v.Data)
                     log.Printf("Redis Request: %s: message: %s\n", v.Channel, v.Data)
                 }
- 
-                if(len(msg.Interface) > 0)  {
+
+                if(len(msg.Interface) == 0 && len(msg.Alias) == 0) {
+                    log.Println("Invalid msg:  both interface and alias are missing.  Use one or the other")
+                    fmt.Println("Invalid msg:  both interface and alias are missing.  Use one or the other")
+                } else if(len(msg.Interface) > 0 && len(msg.Alias) > 0) {
+                    log.Println("Invalid msg:  both interface and alias are set.  Use one or the other")
+                    fmt.Println("Invalid msg:  both interface and alias are set.  Use one or the other")
+                } else if(len(msg.Interface) > 0)  {
                     for _, v := range msg.Interface  {
                         if _, ok := ifmap[v]; ok  {
                             log.Println("Interface " + v + " exists in interface map")
@@ -73,7 +79,7 @@ func subToRedis(server string, port int, subchannel string, auth string) {
                             fmt.Println("Interface " + v + " does not exist in interface map")
                         }            
                     }
-                } else if(len(msg.Alias) > 0)  {
+                } else {
                     for _,v := range msg.Alias  {
                         if _, ok := almap[v]; ok  {
                             for _, dname := range almap[v]  {
