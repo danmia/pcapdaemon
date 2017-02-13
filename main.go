@@ -221,6 +221,7 @@ func main() {
     cstokenPtr = flag.String("cstoken", "", "cloudshark api token")
     csschemePtr = flag.String("csscheme", "", "cloudshark scheme http|https")
     csportPtr := flag.Int("csport", 0, "cloudshark port")
+    cstimeoutPtr := flag.Int("cstimeout", 0, "cloudshark timeout")
     configfile := flag.String("config", "", "/path/to/configfile")
     redisnode := flag.String("redisnode", "", "Hostname|IP of redis server.  Default localhost")
     redisport := flag.Int("redisport", 0, "Port of redis server. Default 6379")
@@ -278,6 +279,9 @@ func main() {
     } 
     if(*csportPtr != 0)  {
         config.Cs.Port = *csportPtr
+    }
+    if(*cstimeoutPtr != 0)  {
+        config.Cs.Timeout = *cstimeoutPtr
     }
     if(*upPtr)  {
         config.Cs.Upload = true
