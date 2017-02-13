@@ -12,6 +12,7 @@ import (
   "net/textproto"
   "net/http"
   "crypto/tls"
+  "time"
 
   // amamzon stuff
   "github.com/aws/aws-sdk-go/aws"
@@ -78,7 +79,10 @@ func postBufferCloudshark(scheme string, host string, port int, token string, bu
     tr := &http.Transport{
         TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
     }
-    client := &http.Client{Transport: tr}
+    client := &http.Client{
+        Transport: tr,
+        Timeout: 15 * time.Second,
+    }
     resp, err := client.Do(request)
     if err != nil {
         log.Printf("Error making request: %s\n", err)
