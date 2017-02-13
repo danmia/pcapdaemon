@@ -56,7 +56,7 @@ func updateInterfaceMap()  {
 func validateOptions(c tomlConfig)  {
 
 	if(!c.Aws.Upload && !c.Cs.Upload && !c.Gen.Writelocal)  {
-		log.Printf("Error.  You must enable at least one of the following: Cloudshar, S3 or Writelocal\n")
+		log.Printf("Error.  You must enable at least one of the following: Cloudshark, S3 or Writelocal\n")
 		os.Exit(1)
 	}
 
@@ -165,7 +165,7 @@ func validateOptions(c tomlConfig)  {
 
     if(c.Gen.Writelocal)  {
         if _, err := os.Stat(c.Gen.Localdir); os.IsNotExist(err) {
-            log.Fatal(c.Gen.Localdir + " does not exist");
+            log.Fatal("localdir: " + c.Gen.Localdir + " does not exist");
         }
     } 
 
@@ -237,12 +237,6 @@ func main() {
     // parse the flags
     flag.Parse()
 
-    log.SetFlags(0)
-    logwriter, e := syslog.New(syslog.Priority(config.Log.Priority), config.Log.Tag)
-    if e == nil {
-        log.SetOutput(logwriter)
-    }
-
     if(*configfile != "")  {
         if _, err := os.Stat(*configfile); os.IsNotExist(err) {
             log.Fatal(*configfile + " does not exist");
@@ -251,6 +245,12 @@ func main() {
                 log.Fatal(err)
             }
         }
+    }
+
+    log.SetFlags(0)
+    logwriter, e := syslog.New(syslog.Priority(config.Log.Priority), config.Log.Tag)
+    if e == nil {
+        log.SetOutput(logwriter)
     }
 
     // create interface map
