@@ -59,6 +59,7 @@ type Cloudshark struct {
     Host        string          `toml:"host"`
     Port        int             `toml:"port"`
     Scheme      string          `toml:"scheme"`
+    Timeout     int             `toml:"timeout"`
     Token       string          `toml:"token"`
     Upload      bool            `toml:"upload"`
 }

@@ -11,6 +11,8 @@ There are 4 controls that determine when/why the capture will exit and upload.  
     -csscheme string        cloudshark scheme http|https (default "https")
     -cstoken string         cloudshark api token (default "xxxxxxx")
     -csport int             cloudshark port
+    -cstimeout int          cloudshark upload timeout (max elapsed time of POST transaction allowed)
+                            a value of 0 (the default) means no timeout
     -redischannel string    Redis channel to subscribe to.  Default capture (default "capture")
     -redisnode string       Hostname|IP of redis server.  Default localhost (default "127.0.0.1")
     -redisport int          Port of redis server. Default 6379 (default 6379)
@@ -101,6 +103,7 @@ logrequests     = false
 host        = "www.cloudshark.org"
 scheme      = "https"
 port        = 443
+timeout     = 0
 token       = "fffffffffffffffffff"
 upload      = true
 
