@@ -38,6 +38,7 @@ type tomlConfig struct {
 	AwsSqs	Sqs					`toml:"sqs"`
     Cs      Cloudshark          `toml:"cloudshark"`
     R       Redis               `toml:"redis"`
+    K       Kafka               `toml:"kafka"`
     Ifmap   InterfaceAliases    `toml:"interface"`
     Log     Syslog              `toml:"syslog"`
 }
@@ -78,6 +79,12 @@ type Redis struct  {
 	Auth		string		`toml:"auth"`
 	Listen		bool		`toml:"listen"`
 }
+
+type Kafka struct {
+    Server      []string    `toml:"server"`
+    Topic       string      `toml:"topic"`
+	Listen		bool		`toml:"listen"`
+} 
 
 type Syslog struct {
     Priority    int         `toml:"priority"`

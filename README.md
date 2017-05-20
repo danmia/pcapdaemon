@@ -74,8 +74,9 @@ There are 4 controls that determine when/why the capture will exit and upload.  
 ## Configuration File format (toml)
  * Defining interfaces is optional.  You only need to do it if you'd like to use an alias.  The basic use case is to group catpure interfaces across several nodes that may have different physical names for a variety of reasons.
  * Redis auth is optional as are ALL of the S3 options 
- * You must set listen to "true" for either Redis or SQS.  You can use both.
+ * You must set listen to "true" for either Kafka, Redis or SQS.  You can use multiple
  * You must enable one of the following Cloudshark, S3 or writelocal
+ * Kafka support is basic and the message is pulled out of the value portion (key is unused)
  * SQS support is implemented using long poll
  * SQS chunksize is the number of messages to process at once.  This could end up being the number of simultaneous captures so use with care
  * Given the time sensitive nature of capture messages, I recommend setting Default visibility timeout to 10 seconds and setting the message retention period to no more than 1 minute (these are in queue configuration in AWS SQS gui)
@@ -113,6 +114,11 @@ host        = "node.running.redis.net"
 port        = 6379
 channel     = "capture"
 auth		= "password"
+
+[kafka]
+listen      = true
+server      = ["127.0.0.1:9092", "myhost.example.com:9092"]
+topic       = "capture"
 
 # consult /usr/include/sys/syslog.h for Priority which is a combination 
 # of facility and severity

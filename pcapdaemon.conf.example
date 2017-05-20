@@ -25,6 +25,11 @@ port        = 6379
 channel     = "capture"
 auth		= "password"
 
+[kafka]
+listen      = true
+server      = ["127.0.0.1:9092", "host.example.com:9092"]
+topic       = "capture"
+
 [syslog]
 priority    = 25
 tag         = "pcapdaemon"

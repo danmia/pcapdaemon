@@ -60,8 +60,8 @@ func validateOptions(c tomlConfig)  {
 		os.Exit(1)
 	}
 
-	if(!c.AwsSqs.Listen && !c.R.Listen)  {
-		log.Printf("Error.  You must enable at least one listener: Redis or Amazon SQS\n")
+	if(!c.AwsSqs.Listen && !c.R.Listen && !c.K.Listen)  {
+		log.Printf("Error.  You must enable at least one listener: Kafka, Redis or Amazon SQS\n")
 		os.Exit(1)
 	}
 	
@@ -123,18 +123,28 @@ func validateOptions(c tomlConfig)  {
 
 	}
 
-    // Redis configs
-	if(c.R.Listen)  {
-		if(c.R.Host == "")  {
-			log.Fatal("You must supply a redis host")
+    // Kafka configs
+	if(c.K.Listen)  {
+		if(len(c.K.Server) < 1)  {
+			log.Fatal("You must supply at least 1 Kafka node")
 		}
-		if(c.R.Channel == "")  {
-			log.Fatal("You must supply a redis channel to subscribe to")
-		}
-		if(c.R.Port == 0)  {
-			c.R.Port = 6379
+		if(c.K.Topic == "")  {
+			log.Fatal("You must supply a Kafka topic to subscribe to")
 		}
 	}
+
+    // Redis configs
+    if(c.R.Listen)  {
+        if(c.R.Host == "")  {
+            log.Fatal("You must supply a redis host")
+        }
+        if(c.R.Channel == "")  {
+            log.Fatal("You must supply a redis channel to subscribe to")
+        }
+        if(c.R.Port == 0)  {
+            c.R.Port = 6379
+        }
+    } 
 
     // Cloudshark configs
     if(c.Cs.Upload)  {
@@ -312,6 +322,14 @@ func main() {
 			done <- true
 		}()
 	}
+
+    if(config.K.Listen)  {
+        go func()  {
+            log.Println("Starting Kafka Thread")
+            subToKafka(config.K.Server, config.K.Topic)
+            done <- true
+        }()
+    }
 
 	if(config.AwsSqs.Listen)  {
 		go func()  {
