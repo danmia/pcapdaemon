@@ -102,7 +102,7 @@ func captureToBuffer(req Capmsg, iface string) {
 		captimeout = config.Gen.Deftimeout * time.Second
 	}
 
-	// Duration managment is to put a cap on how long to capture for no matter what is going on
+	// Duration management is to put a cap on how long to capture for no matter what is going on
 	if req.Duration != 0 {
 		if req.Duration > config.Gen.Maxduration {
 			log.Printf("Error:  message duration %d is greater than max allowable duration %d\n", req.Duration, config.Gen.Maxduration)
