@@ -10,7 +10,6 @@ os:
   - linux
 
 before_install:
-  - sudo apt-get --yes install libpcap
   - sudo apt-get --yes install libpcap-dev
 
 install:
