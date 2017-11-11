@@ -1,0 +1,24 @@
+language: go
+
+# We'll test on oldest 1.7 and newest (but not tip)
+go:
+  - 1.7
+  - 1.8
+  - 1.9
+
+os:
+  - linux
+
+before_install:
+  - sudo apt-get --yes install libpcap
+  - sudo apt-get --yes install libpcap-dev
+
+install:
+  # TODO: Add coverage to project after adding tests
+  # - go get golang.org/x/tools/cmd/cover
+  - go get -d -v ./...
+
+script:
+  - go tool vet -all -v . || true
+  - go generate -v ./...
+  - go build -v ./...

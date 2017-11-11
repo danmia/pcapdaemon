@@ -40,12 +40,12 @@ There are 4 controls that determine when/why the capture will exit and upload.  
         "bytes": 1000,
         "packetdebug":false,
         "logrequest":false,
-		"folder": "myfolder",
-		"bucket": "mybucket",
-		"acl": "public-read",
-		"region": "us-east-1",
-		"endpoint": "s3.amazonaws.com",
-		"encryption": false
+        "folder": "myfolder",
+        "bucket": "mybucket",
+        "acl": "public-read",
+        "region": "us-east-1",
+        "endpoint": "s3.amazonaws.com",
+        "encryption": false
     }
     
  * node - node name to capture on (exact match) Use either node or nodere but not both and one is required. Keyword: "any" matches any host
