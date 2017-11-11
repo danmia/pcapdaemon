@@ -1,26 +1,24 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"log"
-//	"time"
+	//	"time"
 	"encoding/json"
 
-	// amazone stuff
-	"github.com/aws/aws-sdk-go/service/sqs"
+	// amazon stuff
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/sqs"
 )
-
 
 func subToSqs() {
 
-
 	sqsconfig := &aws.Config{
-		Region:           config.AwsSqs.Region,
-        Credentials:      credentials.NewStaticCredentials(*config.AwsSqs.AccessId, *config.AwsSqs.AccessKey, ""),
-    }
+		Region:      config.AwsSqs.Region,
+		Credentials: credentials.NewStaticCredentials(*config.AwsSqs.AccessID, *config.AwsSqs.AccessKey, ""),
+	}
 
 	// Do connect and session code here
 	sess, err := session.NewSession(sqsconfig)
@@ -28,20 +26,19 @@ func subToSqs() {
 		fmt.Println("SQS:  failed to create sqs session,", err)
 		log.Println("SQS:  failed to create sqs session,", err)
 		return
-	} else {
-		fmt.Println("SQS: Session established to ", *config.AwsSqs.Region, " / ", *config.AwsSqs.Url)
-		log.Println("SQS: Session established to ", *config.AwsSqs.Region, " / ", *config.AwsSqs.Url)
 	}
-	
+
+	fmt.Println("SQS: Session established to ", *config.AwsSqs.Region, " / ", *config.AwsSqs.URL)
+	log.Println("SQS: Session established to ", *config.AwsSqs.Region, " / ", *config.AwsSqs.URL)
 
 	svc := sqs.New(sess)
 
-    for {
+	for {
 		// Do long poll here
 		params := &sqs.ReceiveMessageInput{
-			QueueUrl: aws.String(*config.AwsSqs.Url),
+			QueueUrl: aws.String(*config.AwsSqs.URL),
 			AttributeNames: []*string{
-				aws.String("ApproximateNumberOfMessages"), // Required
+				aws.String("ApproximateNumberOfMessages"),           // Required
 				aws.String("ApproximateNumberOfMessagesNotVisible"), // Required
 				aws.String("DelaySeconds"),
 				aws.String("CreatedTimestamp"),
@@ -66,7 +63,7 @@ func subToSqs() {
 		} else {
 
 			var msg Capmsg
-			for i, v := range resp.Messages  {
+			for i, v := range resp.Messages {
 				strvalue := *v.Body
 				if jerr := json.Unmarshal([]byte(strvalue), &msg); jerr != nil {
 					fmt.Println("SQS:  Error marshalling JSON: ", jerr)
@@ -74,25 +71,25 @@ func subToSqs() {
 				} else {
 					fmt.Println("SQS:  Got capmsg: ", msg.Bpf, " index: ", i)
 					log.Println("SQS:  Got capmsg: ", msg.Bpf, " index: ", i)
-					if(len(msg.Interface) > 0)  {
-						for _, v := range msg.Interface  {
-							if _, ok := ifmap[v]; ok  {
+					if len(msg.Interface) > 0 {
+						for _, v := range msg.Interface {
+							if _, ok := ifmap[v]; ok {
 								log.Println("SQS:  Interface " + v + " exists in interface map")
 								fmt.Println("SQS:  Interface " + v + " exists in interface map")
-								go captureToBuffer(msg, v);
+								go captureToBuffer(msg, v)
 							} else {
 								log.Println("SQS:  Interface " + v + " does not exist in interface map")
 								fmt.Println("SQS:  Interface " + v + " does not exist in interface map")
 							}
 						}
-					} else if(len(msg.Alias) > 0)  {
-						for _,v := range msg.Alias  {
-							if _, ok := almap[v]; ok  {
-                                for _, dname := range almap[v]  {
-                                    log.Println("SQS:  Alias " + v + " exists in alias map for device " + dname)
-                                    fmt.Println("SQS:  Alias " + v + " exists in alias map for device " + dname)
-                                    go captureToBuffer(msg, dname);
-                                }
+					} else if len(msg.Alias) > 0 {
+						for _, v := range msg.Alias {
+							if _, ok := almap[v]; ok {
+								for _, dname := range almap[v] {
+									log.Println("SQS:  Alias " + v + " exists in alias map for device " + dname)
+									fmt.Println("SQS:  Alias " + v + " exists in alias map for device " + dname)
+									go captureToBuffer(msg, dname)
+								}
 							} else {
 								log.Println("SQS:  Alias " + v + " does not exist in alias map")
 								fmt.Println("SQS:  Alias " + v + " does not exist in alias map")
@@ -101,7 +98,7 @@ func subToSqs() {
 					}
 				}
 				params := &sqs.DeleteMessageInput{
-					QueueUrl:      aws.String(*config.AwsSqs.Url),
+					QueueUrl:      aws.String(*config.AwsSqs.URL),
 					ReceiptHandle: aws.String(*v.ReceiptHandle),
 				}
 
@@ -115,8 +112,8 @@ func subToSqs() {
 					fmt.Println("SQS:  Successfully deleted message: ", *v.ReceiptHandle, ", ", dresp.String())
 					log.Println("SQS:  Successfully deleted message: ", *v.ReceiptHandle, ", ", dresp.String())
 				}
-				
-			}		
+
+			}
 			// sleep for a couple seconds
 			// fmt.Println("Sleeping after message loop")
 			// time.Sleep(time.Second * 3)
